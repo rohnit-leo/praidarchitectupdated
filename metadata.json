@@ -1,0 +1,8 @@
+{
+  "name": "PRIAD ARCHITECTS updated",
+  "description": "World-class architectural \u0026 interior design firm digital experience featuring interactive project explorer, floorplan viewer, before/after comparisons, material studio, calculation tools, and SEO-optimized architecture portfolio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
