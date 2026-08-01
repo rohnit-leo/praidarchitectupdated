@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ArrowRight, ChevronLeft, ChevronRight, Phone, Mail, MapPin, Instagram, Linkedin, Building2, Users, Trophy } from 'lucide-react';
+import { Menu, X, ArrowRight, Phone, Mail, MapPin, Instagram, Linkedin, Building2, Eye, Compass, Home, CheckCircle2 } from 'lucide-react';
 import { CustomCursor } from './components/CustomCursor';
 import { SEOHead } from './components/SEOHead';
+import { VRViewer } from './components/VRViewer';
+import { ServicesVisual } from './components/ServicesVisual';
+import { StatsCounter } from './components/StatsCounter';
+import { EnquiryModal } from './components/EnquiryModal';
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
-
-  const heroImages = [
-    'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=2000&q=80',
-    'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2000&q=80',
-    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2000&q=80'
-  ];
+  const [enquiryOpen, setEnquiryOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,32 +21,7 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [heroImages.length]);
-
-  const navItems = ['Home', 'About', 'Services', 'Process', 'Projects'];
-
-  const services = [
-    'Architecture',
-    'Interior Design',
-    '3D Visualization',
-    'Working Drawings',
-    'Renovation & Remodeling',
-  ];
-
-  const processSteps = [
-    { title: 'Consultation', desc: 'Initial vision alignment and requirements gathering.' },
-    { title: 'Site Visit', desc: 'Context analysis and spatial constraint evaluation.' },
-    { title: 'Concept Design', desc: 'Architectural form, spatial planning, and flow.' },
-    { title: 'Design Development', desc: 'Refined material selection and detailed styling.' },
-    { title: '3D Visualization', desc: 'Photorealistic architectural previews.' },
-    { title: 'Working Drawings', desc: 'Comprehensive technical blueprints for execution.' },
-    { title: 'Execution Support', desc: 'On-site supervision and quality assurance.' },
-  ];
+  const navItems = ['Home', 'Services', '360 VR', 'Projects', 'Process', 'About'];
 
   const projects = [
     {
@@ -71,38 +44,59 @@ export default function App() {
     }
   ];
 
+  const processSteps = [
+    {
+      title: 'Consultation',
+      desc: 'We begin by understanding your vision, requirements, budget, and project goals.'
+    },
+    {
+      title: 'Planning & Concept Design',
+      desc: 'Our team develops creative concepts, layouts, and design ideas tailored to your needs.'
+    },
+    {
+      title: 'Design Development',
+      desc: 'We prepare detailed architectural and interior drawings, 3D visualizations, and material concepts for your review.'
+    },
+    {
+      title: 'Documentation',
+      desc: 'Comprehensive working drawings, BOQs, and technical documentation are prepared for smooth project execution.'
+    },
+    {
+      title: 'Execution Support',
+      desc: 'We coordinate with contractors and provide design guidance to ensure the project is executed according to the approved design.'
+    },
+    {
+      title: 'Project Completion',
+      desc: 'Every detail is reviewed to ensure exceptional quality, functionality, and client satisfaction before final handover.'
+    }
+  ];
+
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
-    const element = document.getElementById(id.toLowerCase());
+    
+    let targetId = id.toLowerCase();
+    if (id === '360 VR') targetId = 'vr';
+    
+    const element = document.getElementById(targetId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % heroImages.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev === 0 ? heroImages.length - 1 : prev - 1));
-
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-slate-200 font-sans-body relative selection:bg-[#3b5c36] selection:text-white">
-      <CustomCursor />
+    <>
+      <div className="bg-[#fafafa] text-slate-800 font-sans-body relative selection:bg-[#3b5c36] selection:text-white pb-16 md:pb-0">
+        <CustomCursor />
       <SEOHead activeRoute="home" />
 
-      {/* Kalash Image (Small) */}
-      <img 
-        src="https://kwrv4maomvrojc0c.public.blob.vercel-storage.com/project/IMG_3188.PNG" 
-        alt="Kalash Icon" 
-        className="fixed top-24 left-4 w-6 h-6 opacity-30 z-50 pointer-events-none"
-        referrerPolicy="no-referrer"
-      />
-
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled ? 'bg-[#0a0a0a]/95 backdrop-blur-md border-b border-white/5 py-4' : 'bg-transparent py-6'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm py-3' : 'bg-transparent py-5'}`}>
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <button
             onClick={() => scrollToSection('home')}
-            className="flex items-center gap-4 group cursor-pointer"
+            className="flex items-center gap-3 group cursor-pointer"
           >
-            <div className="w-12 h-12 flex items-center justify-center">
+            <div className="w-10 h-10 flex items-center justify-center">
               <img
                 src="https://kwrv4maomvrojc0c.public.blob.vercel-storage.com/IMG_3159.PNG"
                 alt="PRIAD ARCHITECTS Logo Symbol"
@@ -111,10 +105,10 @@ export default function App() {
               />
             </div>
             <div className="flex flex-col items-start justify-center">
-              <div className="font-serif-display text-lg tracking-[0.15em] font-bold text-[#4a7a42] uppercase leading-none">
+              <div className="font-serif-display text-base tracking-[0.15em] font-bold uppercase leading-none text-[#3b5c36]">
                 Priad Architects
               </div>
-              <div className="text-[14px] font-cormorant italic text-[#1c356b] mt-1 leading-none">
+              <div className="text-[12px] font-cormorant italic text-[#1c356b] mt-1 leading-none">
                 Building legacy.
               </div>
             </div>
@@ -126,16 +120,22 @@ export default function App() {
               <button
                 key={item}
                 onClick={() => scrollToSection(item)}
-                className="text-xs font-mono-tech uppercase tracking-widest text-slate-400 hover:text-[#3b5c36] transition-colors cursor-pointer"
+                className={`text-xs font-mono-tech uppercase tracking-widest hover:text-[#3b5c36] transition-colors cursor-pointer ${isScrolled ? 'text-slate-600' : 'text-slate-800'}`}
               >
                 {item}
               </button>
             ))}
+            <button 
+              onClick={() => setEnquiryOpen(true)}
+              className="bg-[#3b5c36] hover:bg-[#2c4728] text-white font-mono-tech text-[10px] uppercase tracking-widest px-6 py-2.5 rounded-full transition-colors shadow-lg shadow-[#3b5c36]/20"
+            >
+              Get in Touch
+            </button>
           </nav>
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden text-slate-300 p-2 cursor-pointer"
+            className="md:hidden text-slate-800 p-2 cursor-pointer"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -144,169 +144,124 @@ export default function App() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-30 bg-[#0a0a0a] pt-24 px-6">
+        <div className="fixed inset-0 z-30 bg-white pt-24 px-6 overflow-y-auto">
           <div className="flex flex-col gap-6">
             {navItems.map((item) => (
               <button
                 key={item}
                 onClick={() => scrollToSection(item)}
-                className="text-2xl font-serif-display text-left text-slate-300 hover:text-[#3b5c36] cursor-pointer border-b border-white/10 pb-4"
+                className="text-2xl font-serif-display text-left text-slate-800 hover:text-[#3b5c36] cursor-pointer border-b border-slate-100 pb-4"
               >
                 {item}
               </button>
             ))}
+            <button 
+              onClick={() => { setEnquiryOpen(true); setMobileMenuOpen(false); }}
+              className="text-2xl font-serif-display text-left text-[#3b5c36] cursor-pointer pt-4"
+            >
+              Enquire Now
+            </button>
           </div>
         </div>
       )}
 
       <main>
-        {/* Hero Carousel Section */}
-        <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden group">
-          <div className="absolute inset-0 z-0 bg-black">
-            {heroImages.map((img, idx) => (
-              <div 
-                key={idx}
-                className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${idx === currentSlide ? 'opacity-40' : 'opacity-0'}`}
-              >
-                <img 
-                  src={img}
-                  alt="Hero Architecture"
-                  className={`w-full h-full object-cover ${idx === currentSlide ? 'animate-image-zoom' : ''}`}
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-            ))}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/50 via-transparent to-[#0a0a0a] z-10" />
-          </div>
+        {/* Hero Section */}
+        <section id="home" className="relative min-h-screen flex items-center justify-center pt-24 pb-20 overflow-hidden bg-slate-50">
+          <div className="absolute inset-0 z-0 bg-noise opacity-50" />
           
-          <button onClick={prevSlide} className="absolute left-6 z-20 p-3 rounded-full bg-black/20 text-white/50 hover:bg-black/40 hover:text-white transition-all opacity-0 group-hover:opacity-100 cursor-pointer">
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button onClick={nextSlide} className="absolute right-6 z-20 p-3 rounded-full bg-black/20 text-white/50 hover:bg-black/40 hover:text-white transition-all opacity-0 group-hover:opacity-100 cursor-pointer">
-            <ChevronRight className="w-6 h-6" />
-          </button>
-
-          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto mt-20">
-            <span className="text-[#3b5c36] font-mono-tech text-xs tracking-[0.3em] uppercase mb-6 block drop-shadow-md">Welcome to Priad Architects</span>
-            <h1 className="font-serif-display text-5xl md:text-7xl lg:text-8xl text-white mb-6 font-medium tracking-tight drop-shadow-2xl">
-              Crafting <span className="text-[#3b5c36] italic font-light drop-shadow-md">Experiences,</span><br/>
+          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex flex-col items-center">
+            
+            <img 
+              src="https://kwrv4maomvrojc0c.public.blob.vercel-storage.com/project/IMG_3188.PNG" 
+              alt="Kalash Icon" 
+              className="w-16 h-16 object-contain mb-8 opacity-80"
+              referrerPolicy="no-referrer"
+            />
+            
+            <h1 className="font-serif-display text-4xl md:text-5xl lg:text-6xl text-slate-900 mb-6 font-medium tracking-tight">
+              Crafting <span className="text-[#3b5c36] italic font-light">Experiences,</span><br/>
               Shaping Lifestyles.
             </h1>
-            <p className="text-slate-300 font-sans-body max-w-2xl mx-auto text-lg mb-10 drop-shadow-lg">
-              We create landmarks that inspire generations.
+            <p className="text-slate-600 font-sans-body max-w-2xl mx-auto text-base md:text-lg mb-10 leading-relaxed">
+              We don't simply design buildings—we craft experiences, shape lifestyles, and create landmarks that inspire generations.
             </p>
-            <button 
-              onClick={() => scrollToSection('projects')}
-              className="bg-transparent border border-[#3b5c36] text-[#3b5c36] hover:bg-[#3b5c36] hover:text-[#0a0a0a] font-mono-tech text-xs uppercase tracking-[0.2em] px-8 py-4 rounded-full transition-all duration-300 cursor-pointer"
-            >
-              View Our Work
-            </button>
+            
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <button 
+                onClick={() => scrollToSection('projects')}
+                className="bg-[#3b5c36] text-white hover:bg-[#2c4728] font-mono-tech text-[11px] uppercase tracking-[0.2em] px-8 py-4 rounded-full transition-all duration-300 cursor-pointer shadow-xl shadow-[#3b5c36]/20"
+              >
+                View Our Work
+              </button>
+              <button 
+                onClick={() => setEnquiryOpen(true)}
+                className="bg-transparent border border-slate-300 text-slate-700 hover:border-[#3b5c36] hover:text-[#3b5c36] font-mono-tech text-[11px] uppercase tracking-[0.2em] px-8 py-4 rounded-full transition-all duration-300 cursor-pointer"
+              >
+                Start a Project
+              </button>
+            </div>
           </div>
         </section>
 
-        {/* About Section */}
-        <section id="about" className="py-32 px-6 bg-[#0d0d0d]">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-16">
-              <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">About Us</span>
-              <h2 className="font-serif-display text-3xl md:text-5xl text-white">At Priad Architects, we don't simply design buildings—we craft experiences, shape lifestyles, and create landmarks that inspire generations.</h2>
+        {/* 360 VR Section */}
+        <section id="vr" className="py-24 px-6 bg-white overflow-hidden">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
+              <div>
+                <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">Immersive Experience</span>
+                <h2 className="font-serif-display text-3xl md:text-4xl text-slate-900">360° Virtual Tours</h2>
+              </div>
+              <p className="text-slate-600 font-sans-body text-sm max-w-md">
+                Step inside our designs before they are built. Use your mouse or touch to look around the virtual space and experience the architecture in true 360 degrees.
+              </p>
             </div>
             
-            <div className="grid md:grid-cols-2 gap-16 mt-20">
-              <div>
-                <h3 className="font-serif-display text-2xl text-[#3b5c36] mb-6">Our Vision</h3>
-                <p className="text-slate-400 font-sans-body leading-relaxed">
-                  To be recognized as a leading architecture and interior design studio, delivering innovative, sustainable, and timeless spaces that redefine modern living and enrich communities.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-serif-display text-2xl text-[#3b5c36] mb-6">Our Mission</h3>
-                <ul className="text-slate-400 font-sans-body leading-relaxed space-y-4 list-disc pl-4 marker:text-[#3b5c36]">
-                  <li>To create architecture that balances beauty, functionality, and sustainability.</li>
-                  <li>To deliver exceptional design experiences through collaboration and innovation.</li>
-                  <li>To uphold the highest standards of quality, professionalism, and technical excellence.</li>
-                  <li>To build lasting relationships based on trust, transparency, and client satisfaction.</li>
-                  <li>To transform ideas into inspiring spaces that create lasting value.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Services Section */}
-        <section id="services" className="py-32 px-6 bg-[#0a0a0a] border-t border-white/5">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
-              <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">Expertise</span>
-              <h2 className="font-serif-display text-4xl md:text-5xl text-white">Services</h2>
-            </div>
-            <div className="max-w-3xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-                {services.map((service, idx) => (
-                  <div key={idx} className="flex items-center gap-4 py-4 border-b border-white/5">
-                    <span className="text-[#3b5c36] font-mono-tech text-sm">0{idx + 1}</span>
-                    <h3 className="font-serif-display text-xl text-slate-200">{service}</h3>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Process Section */}
-        <section id="process" className="py-32 px-6 bg-[#0a0a0a]">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
-              <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">Methodology</span>
-              <h2 className="font-serif-display text-4xl md:text-5xl text-white">Process</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {processSteps.map((step, idx) => (
-                <div key={idx} className="relative p-8 border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-colors rounded-2xl overflow-hidden group">
-                  <div className="text-6xl font-serif-display text-white/[0.03] absolute -top-2 -right-2 group-hover:text-[#3b5c36]/10 transition-colors font-bold">
-                    0{idx + 1}
-                  </div>
-                  <div className="relative z-10 mt-8">
-                    <h3 className="font-serif-display text-xl text-white mb-3">{step.title}</h3>
-                    <p className="text-slate-400 font-sans-body text-sm leading-relaxed">{step.desc}</p>
-                  </div>
-                </div>
-              ))}
+            <div className="w-full h-[60vh] bg-slate-100 rounded-3xl overflow-hidden border border-slate-200 shadow-inner relative">
+              <VRViewer />
             </div>
           </div>
         </section>
 
         {/* Stats Section */}
-        <section className="py-24 px-6 bg-[#3b5c36]">
+        <section className="py-20 px-6 bg-white border-y border-slate-100 relative z-20">
           <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
             <div>
-              <div className="text-4xl md:text-5xl font-serif-display text-white mb-2">15+</div>
-              <div className="text-[#0a0a0a] font-mono-tech text-xs uppercase tracking-widest font-bold">Years Experience</div>
+              <StatsCounter end={2} suffix="+" />
+              <div className="text-slate-500 font-mono-tech text-[10px] uppercase tracking-widest font-bold">Years Experience</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-serif-display text-white mb-2">120+</div>
-              <div className="text-[#0a0a0a] font-mono-tech text-xs uppercase tracking-widest font-bold">Projects Completed</div>
+              <StatsCounter end={10} suffix="+" />
+              <div className="text-slate-500 font-mono-tech text-[10px] uppercase tracking-widest font-bold">Projects Completed</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-serif-display text-white mb-2">25</div>
-              <div className="text-[#0a0a0a] font-mono-tech text-xs uppercase tracking-widest font-bold">Design Awards</div>
+              <StatsCounter end={25} />
+              <div className="text-slate-500 font-mono-tech text-[10px] uppercase tracking-widest font-bold">Design Awards</div>
             </div>
             <div>
-              <div className="text-4xl md:text-5xl font-serif-display text-white mb-2">100%</div>
-              <div className="text-[#0a0a0a] font-mono-tech text-xs uppercase tracking-widest font-bold">Client Satisfaction</div>
+              <StatsCounter end={100} suffix="%" />
+              <div className="text-slate-500 font-mono-tech text-[10px] uppercase tracking-widest font-bold">Client Satisfaction</div>
             </div>
           </div>
         </section>
 
-        {/* Projects Section */}
-        <section id="projects" className="py-32 px-6 bg-[#0a0a0a] border-t border-white/5">
+        {/* Services Section */}
+        <section id="services" className="py-24 px-6 bg-slate-50">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-              <div>
-                <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">Selected Works</span>
-                <h2 className="font-serif-display text-4xl md:text-5xl text-white">Portfolio</h2>
-              </div>
+            <div className="text-center mb-16">
+              <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">Our Expertise</span>
+              <h2 className="font-serif-display text-3xl md:text-4xl text-slate-900">Services</h2>
+            </div>
+            <ServicesVisual />
+          </div>
+        </section>
+
+        {/* Projects Section */}
+        <section id="projects" className="py-24 px-6 bg-slate-50">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">Selected Works</span>
+              <h2 className="font-serif-display text-3xl md:text-4xl text-slate-900">Portfolio</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -314,7 +269,7 @@ export default function App() {
                 <button 
                   key={project.id}
                   onClick={() => setSelectedProject(project.id)}
-                  className="group text-left cursor-pointer relative overflow-hidden rounded-xl block w-full h-[500px]"
+                  className="group text-left cursor-pointer relative overflow-hidden rounded-2xl block w-full h-[400px] shadow-sm hover:shadow-xl transition-shadow duration-500 bg-white"
                 >
                   <img 
                     src={project.image}
@@ -322,10 +277,10 @@ export default function App() {
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8">
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent flex flex-col justify-end p-6">
                     <h3 className="font-serif-display text-2xl text-white mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">{project.title}</h3>
-                    <div className="flex items-center gap-2 text-[#3b5c36] opacity-0 group-hover:opacity-100 transition-all duration-300">
-                      <span className="font-mono-tech text-xs uppercase tracking-wider">View Project</span>
+                    <div className="flex items-center gap-2 text-[#a8d3a0] opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <span className="font-mono-tech text-[10px] uppercase tracking-wider">View Project</span>
                       <ArrowRight className="w-4 h-4" />
                     </div>
                   </div>
@@ -334,19 +289,104 @@ export default function App() {
             </div>
           </div>
         </section>
+
+        {/* Process Section */}
+        <section id="process" className="py-24 px-6 bg-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-20">
+              <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">Methodology</span>
+              <h2 className="font-serif-display text-3xl md:text-4xl text-slate-900">Our Process</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+              {processSteps.map((step, idx) => (
+                <div key={idx} className="relative p-8 border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 rounded-3xl overflow-hidden group">
+                  <div className="text-8xl font-serif-display text-slate-100 absolute -bottom-4 -right-4 group-hover:text-[#3b5c36]/10 transition-colors font-bold pointer-events-none">
+                    0{idx + 1}
+                  </div>
+                  <div className="relative z-10">
+                    <span className="text-[#3b5c36] font-mono-tech text-[10px] uppercase tracking-widest font-bold block mb-3">Step {idx + 1}</span>
+                    <h3 className="font-serif-display text-xl text-slate-900 mb-3">{step.title}</h3>
+                    <p className="text-slate-600 font-sans-body text-sm leading-relaxed">{step.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Why Choose Us */}
+        <section className="py-24 px-6 bg-slate-50">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">Advantage</span>
+              <h2 className="font-serif-display text-3xl md:text-4xl text-slate-900">Why Choose Us</h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                { title: 'Creative & Customized Design', desc: 'Every project is uniquely designed to reflect your lifestyle, brand, and aspirations.' },
+                { title: 'End-to-End Solutions', desc: 'From concept development and planning to detailed drawings and execution support, we provide comprehensive design services under one roof.' },
+                { title: 'Quality & Precision', desc: 'We focus on accuracy, quality materials, and practical solutions that ensure long-lasting value.' },
+                { title: 'Transparent Communication', desc: 'We maintain clear communication throughout every stage of the project, ensuring confidence and peace of mind.' },
+                { title: 'Modern Technology', desc: 'Using advanced design tools and realistic 3D visualization, we help clients experience their spaces before construction begins.' },
+                { title: 'Client-First Approach', desc: 'Your vision is at the heart of every decision we make, resulting in spaces that are both functional and inspiring.' }
+              ].map((feature, i) => (
+                <div key={i} className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-start gap-4">
+                  <div className="w-10 h-10 rounded-full bg-[#3b5c36]/10 flex items-center justify-center text-[#3b5c36]">
+                    <CheckCircle2 className="w-5 h-5" />
+                  </div>
+                  <h3 className="font-serif-display text-lg text-slate-900">{feature.title}</h3>
+                  <p className="text-slate-600 font-sans-body text-sm leading-relaxed">{feature.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* About / Vision / Mission */}
+        <section id="about" className="py-32 px-6 bg-white border-t border-slate-100">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">About Us</span>
+              <h2 className="font-serif-display text-3xl md:text-4xl text-slate-900">Designing Spaces.<br/>Building Trust.<br/>Creating Timeless Experiences.</h2>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-16 mt-20">
+              <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100">
+                <h3 className="font-serif-display text-2xl text-[#1c356b] mb-6 flex items-center gap-3">
+                  <Eye className="w-6 h-6 text-[#3b5c36]" />
+                  Vision
+                </h3>
+                <p className="text-slate-700 font-sans-body leading-relaxed text-sm">
+                  To become a trusted and innovative architectural and interior design firm, recognized for creating timeless spaces that enrich lives, inspire communities, and set new standards in design excellence.
+                </p>
+              </div>
+              <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100">
+                <h3 className="font-serif-display text-2xl text-[#1c356b] mb-6 flex items-center gap-3">
+                  <Compass className="w-6 h-6 text-[#3b5c36]" />
+                  Mission
+                </h3>
+                <p className="text-slate-700 font-sans-body leading-relaxed text-sm">
+                  At Priad Architects, our mission is to transform ideas into thoughtfully designed spaces through creativity, technical expertise, and meticulous attention to detail. We are committed to delivering high-quality architectural and interior design solutions that balance aesthetics, functionality, sustainability, and value. By building strong relationships with our clients, we strive to exceed expectations on every project.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* Footer */}
-      <footer className="bg-[#050505] pt-24 pb-12 px-6 border-t border-white/5">
+      <footer className="bg-slate-900 pt-24 pb-32 md:pb-12 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
             {/* Brand & Intro */}
             <div className="col-span-1 lg:col-span-1">
               <div className="flex flex-col items-start mb-6">
-                <div className="font-serif-display text-2xl tracking-[0.15em] font-bold text-[#4a7a42] uppercase leading-none">
+                <div className="font-serif-display text-2xl tracking-[0.15em] font-bold text-white uppercase leading-none">
                   Priad Architects
                 </div>
-                <div className="text-[16px] font-cormorant italic text-[#1c356b] mt-2 leading-none">
+                <div className="text-[14px] font-cormorant italic text-[#a8d3a0] mt-2 leading-none">
                   Building legacy.
                 </div>
               </div>
@@ -354,10 +394,10 @@ export default function App() {
                 Delivering innovative, sustainable, and timeless spaces that redefine modern living and enrich communities.
               </p>
               <div className="flex items-center gap-4">
-                <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 hover:bg-[#3b5c36] hover:text-white transition-colors">
+                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:bg-[#3b5c36] hover:text-white transition-colors">
                   <Instagram className="w-4 h-4" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-slate-300 hover:bg-[#3b5c36] hover:text-white transition-colors">
+                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:bg-[#3b5c36] hover:text-white transition-colors">
                   <Linkedin className="w-4 h-4" />
                 </a>
               </div>
@@ -367,9 +407,9 @@ export default function App() {
             <div>
               <h4 className="font-mono-tech text-xs tracking-widest uppercase text-white mb-6">Quick Links</h4>
               <ul className="space-y-4">
-                {['Home', 'About Us', 'Services', 'Projects', 'Process'].map((item) => (
+                {['Home', 'Services', 'Projects', 'Process', 'About'].map((item) => (
                   <li key={item}>
-                    <button onClick={() => scrollToSection(item === 'About Us' ? 'about' : item)} className="text-slate-400 hover:text-[#3b5c36] text-sm transition-colors cursor-pointer">
+                    <button onClick={() => scrollToSection(item)} className="text-slate-400 hover:text-white text-sm transition-colors cursor-pointer">
                       {item}
                     </button>
                   </li>
@@ -382,22 +422,22 @@ export default function App() {
               <h4 className="font-mono-tech text-xs tracking-widest uppercase text-white mb-6">Contact Us</h4>
               <ul className="space-y-4">
                 <li className="flex items-start gap-3 text-slate-400 text-sm">
-                  <MapPin className="w-5 h-5 text-[#3b5c36] shrink-0" />
+                  <MapPin className="w-5 h-5 text-[#a8d3a0] shrink-0 mt-0.5" />
                   <span>PRIAD ARCHITECTS<br/>Chinthamani Nagar, Kuppakonam Pudur<br/>Coimbatore, Tamil Nadu 641038</span>
                 </li>
                 <li className="flex items-center gap-3 text-slate-400 text-sm">
-                  <Phone className="w-5 h-5 text-[#3b5c36] shrink-0" />
+                  <Phone className="w-5 h-5 text-[#a8d3a0] shrink-0" />
                   <span>+91 90437 21008</span>
                 </li>
                 <li className="flex items-center gap-3 text-slate-400 text-sm">
-                  <Mail className="w-5 h-5 text-[#3b5c36] shrink-0" />
+                  <Mail className="w-5 h-5 text-[#a8d3a0] shrink-0" />
                   <span>priadarchitects@gmail.com</span>
                 </li>
               </ul>
             </div>
 
             {/* Map Integration */}
-            <div className="w-full h-48 rounded-xl overflow-hidden bg-white/5 relative group">
+            <div className="w-full h-48 rounded-xl overflow-hidden bg-slate-800 relative group border border-white/10">
               <iframe 
                 src="https://maps.google.com/maps?q=PRIAD+ARCHITECTS,+Chinthamani+Nagar,+Kuppakonam+Pudur,+Coimbatore,+Tamil+Nadu+641038&t=&z=15&ie=UTF8&iwloc=&output=embed" 
                 width="100%" 
@@ -406,64 +446,97 @@ export default function App() {
                 allowFullScreen={true} 
                 loading="lazy" 
                 referrerPolicy="no-referrer-when-downgrade"
-                className="filter invert-[90%] hue-rotate-180 contrast-80 opacity-80 group-hover:opacity-100 transition-opacity"
+                className="opacity-80 group-hover:opacity-100 transition-opacity"
               ></iframe>
             </div>
           </div>
           
-          <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-slate-500 font-sans-body text-xs text-center md:text-left">
               © {new Date().getFullYear()} PRIAD ARCHITECTS. All rights reserved.
             </div>
             <div className="text-slate-500 font-sans-body text-xs">
-              <a href="#" className="hover:text-[#3b5c36] transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
               <span className="mx-2">|</span>
-              <a href="#" className="hover:text-[#3b5c36] transition-colors">Terms of Service</a>
+              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
             </div>
           </div>
         </div>
       </footer>
+    </div>
+
+    {/* Sticky Bottom Call to Action for Mobile */}
+    <div className="fixed bottom-0 left-0 right-0 z-[100] md:hidden flex bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-20px_40px_rgba(0,0,0,0.15)] border-t border-slate-200">
+      <a href="tel:+919043721008" className="flex-1 flex items-center justify-center gap-2 py-4 bg-slate-900 text-white hover:bg-slate-800 transition-colors active:bg-slate-700 border-r border-slate-200">
+        <Phone className="w-4 h-4 text-white" />
+        <span className="text-[11px] font-mono-tech uppercase tracking-widest font-bold">Call Us</span>
+      </a>
+      <a href="https://wa.me/919043721008" target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-2 py-4 bg-[#25D366] text-white hover:bg-[#128C7E] transition-colors active:bg-[#0c6b5f]">
+        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+        </svg>
+        <span className="text-[11px] font-mono-tech uppercase tracking-widest font-bold">WhatsApp</span>
+      </a>
+    </div>
+
+      {/* Floating Action Buttons for Desktop */}
+      <div className="hidden md:flex fixed bottom-8 right-8 z-50 flex-col gap-4">
+        <a href="https://wa.me/919043721008" target="_blank" rel="noreferrer" className="w-14 h-14 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-full flex items-center justify-center shadow-2xl transition-all hover:scale-110 cursor-pointer">
+          <svg className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+          </svg>
+        </a>
+      </div>
 
       {/* Project Detail Modal */}
       {selectedProject && (
-        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl overflow-y-auto pt-24 px-4 pb-24">
+        <div className="fixed inset-0 z-50 bg-white/95 backdrop-blur-xl overflow-y-auto pt-24 px-4 pb-24">
           <button 
             onClick={() => setSelectedProject(null)}
-            className="fixed top-8 right-8 text-white hover:text-[#3b5c36] transition-colors z-50 bg-white/10 p-3 rounded-full cursor-pointer"
+            className="fixed top-8 right-8 text-slate-400 hover:text-[#3b5c36] transition-colors z-50 bg-white shadow-md p-3 rounded-full cursor-pointer"
           >
             <X className="w-6 h-6" />
           </button>
           
           {projects.filter(p => p.id === selectedProject).map(project => (
-            <div key={project.id} className="max-w-5xl mx-auto">
+            <div key={project.id} className="max-w-5xl mx-auto animate-image-zoom">
               <img 
                 src={project.image}
                 alt={project.title}
-                className="w-full h-[60vh] object-cover rounded-2xl mb-12"
+                className="w-full h-[60vh] object-cover rounded-2xl mb-12 shadow-lg"
                 referrerPolicy="no-referrer"
               />
               <div className="grid md:grid-cols-3 gap-12">
                 <div className="md:col-span-2">
-                  <h2 className="font-serif-display text-4xl text-white mb-6">{project.title}</h2>
-                  <p className="text-slate-300 font-sans-body leading-relaxed text-lg">
+                  <h2 className="font-serif-display text-4xl text-slate-900 mb-6">{project.title}</h2>
+                  <p className="text-slate-600 font-sans-body leading-relaxed text-lg">
                     {project.description}
                   </p>
                 </div>
                 <div>
-                  <div className="border-t border-white/10 pt-6">
-                    <span className="text-[#3b5c36] font-mono-tech text-xs uppercase tracking-wider block mb-2">Category</span>
-                    <span className="text-white font-sans-body">Architecture / Interior Design</span>
+                  <div className="border-t border-slate-200 pt-6">
+                    <span className="text-[#3b5c36] font-mono-tech text-xs uppercase tracking-wider block mb-2 font-bold">Category</span>
+                    <span className="text-slate-700 font-sans-body text-sm">Architecture / Interior Design</span>
                   </div>
-                  <div className="border-t border-white/10 pt-6 mt-6">
-                    <span className="text-[#3b5c36] font-mono-tech text-xs uppercase tracking-wider block mb-2">Status</span>
-                    <span className="text-white font-sans-body">Completed</span>
+                  <div className="border-t border-slate-200 pt-6 mt-6">
+                    <span className="text-[#3b5c36] font-mono-tech text-xs uppercase tracking-wider block mb-2 font-bold">Status</span>
+                    <span className="text-slate-700 font-sans-body text-sm">Completed</span>
                   </div>
+                  <button 
+                    onClick={() => { setSelectedProject(null); setEnquiryOpen(true); }}
+                    className="w-full mt-8 bg-[#3b5c36] text-white py-4 rounded-xl font-mono-tech text-xs uppercase tracking-widest hover:bg-[#2c4728] transition-colors shadow-lg"
+                  >
+                    Enquire Similar
+                  </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
       )}
-    </div>
+
+      {/* Enquiry Form Modal */}
+      <EnquiryModal isOpen={enquiryOpen} onClose={() => setEnquiryOpen(false)} />
+    </>
   );
 }
