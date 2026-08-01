@@ -383,15 +383,15 @@ export default function App() {
               <ul className="space-y-4">
                 <li className="flex items-start gap-3 text-slate-400 text-sm">
                   <MapPin className="w-5 h-5 text-[#3b5c36] shrink-0" />
-                  <span>123 Architecture Blvd, Suite 400<br/>New York, NY 10001</span>
+                  <span>PRIAD ARCHITECTS<br/>Chinthamani Nagar, Kuppakonam Pudur<br/>Coimbatore, Tamil Nadu 641038</span>
                 </li>
                 <li className="flex items-center gap-3 text-slate-400 text-sm">
                   <Phone className="w-5 h-5 text-[#3b5c36] shrink-0" />
-                  <span>+1 (555) 123-4567</span>
+                  <span>+91 90437 21008</span>
                 </li>
                 <li className="flex items-center gap-3 text-slate-400 text-sm">
                   <Mail className="w-5 h-5 text-[#3b5c36] shrink-0" />
-                  <span>hello@priadarchitects.com</span>
+                  <span>priadarchitects@gmail.com</span>
                 </li>
               </ul>
             </div>
@@ -399,7 +399,7 @@ export default function App() {
             {/* Map Integration */}
             <div className="w-full h-48 rounded-xl overflow-hidden bg-white/5 relative group">
               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1m3!1d193595.15830869428!2d-74.119763973046!3d40.69766374874431!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY!5e0!3m2!1sen!2sus!4v1680000000000!5m2!1sen!2sus" 
+                src="https://maps.google.com/maps?q=PRIAD+ARCHITECTS,+Chinthamani+Nagar,+Kuppakonam+Pudur,+Coimbatore,+Tamil+Nadu+641038&t=&z=15&ie=UTF8&iwloc=&output=embed" 
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 
