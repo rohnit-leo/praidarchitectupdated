@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ArrowRight, Phone, Mail, MapPin, Instagram, Linkedin, Building2, Eye, Compass, Home, CheckCircle2 } from 'lucide-react';
+import { Menu, X, ArrowRight, Phone, Mail, MapPin, Instagram, Linkedin, Facebook, Building2, Eye, Compass, Home, CheckCircle2 } from 'lucide-react';
 import { CustomCursor } from './components/CustomCursor';
 import { SEOHead } from './components/SEOHead';
 import { VRViewer } from './components/VRViewer';
 import { ServicesVisual } from './components/ServicesVisual';
 import { StatsCounter } from './components/StatsCounter';
 import { EnquiryModal } from './components/EnquiryModal';
+import { HeroCarousel } from './components/HeroCarousel';
+import { StudioCareers } from './components/StudioCareers';
 
 export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -21,7 +23,7 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navItems = ['Home', 'Services', '360 VR', 'Projects', 'Process', 'About'];
+  const navItems = ['Home', 'Services', '360 VR', 'Projects', 'Studio', 'About'];
 
   const projects = [
     {
@@ -41,33 +43,6 @@ export default function App() {
       title: 'Urban Oasis',
       image: 'https://kwrv4maomvrojc0c.public.blob.vercel-storage.com/project/WhatsApp%20Image%202026-07-31%20at%208.56.05%20PM.jpeg',
       description: 'Seamlessly integrating indoor and outdoor environments, this residence features lush landscaping and natural material palettes.',
-    }
-  ];
-
-  const processSteps = [
-    {
-      title: 'Consultation',
-      desc: 'We begin by understanding your vision, requirements, budget, and project goals.'
-    },
-    {
-      title: 'Planning & Concept Design',
-      desc: 'Our team develops creative concepts, layouts, and design ideas tailored to your needs.'
-    },
-    {
-      title: 'Design Development',
-      desc: 'We prepare detailed architectural and interior drawings, 3D visualizations, and material concepts for your review.'
-    },
-    {
-      title: 'Documentation',
-      desc: 'Comprehensive working drawings, BOQs, and technical documentation are prepared for smooth project execution.'
-    },
-    {
-      title: 'Execution Support',
-      desc: 'We coordinate with contractors and provide design guidance to ensure the project is executed according to the approved design.'
-    },
-    {
-      title: 'Project Completion',
-      desc: 'Every detail is reviewed to ensure exceptional quality, functionality, and client satisfaction before final handover.'
     }
   ];
 
@@ -120,14 +95,14 @@ export default function App() {
               <button
                 key={item}
                 onClick={() => scrollToSection(item)}
-                className={`text-xs font-mono-tech uppercase tracking-widest hover:text-[#3b5c36] transition-colors cursor-pointer ${isScrolled ? 'text-slate-600' : 'text-slate-800'}`}
+                className={`text-xs font-montserrat uppercase tracking-widest hover:text-[#3b5c36] transition-colors cursor-pointer ${isScrolled ? 'text-slate-600' : 'text-slate-800'}`}
               >
                 {item}
               </button>
             ))}
             <button 
               onClick={() => setEnquiryOpen(true)}
-              className="bg-[#3b5c36] hover:bg-[#2c4728] text-white font-mono-tech text-[10px] uppercase tracking-widest px-6 py-2.5 rounded-full transition-colors shadow-lg shadow-[#3b5c36]/20"
+              className="bg-[#3b5c36] hover:bg-[#2c4728] text-white font-montserrat text-[10px] uppercase tracking-widest px-6 py-2.5 rounded-full transition-colors shadow-lg shadow-[#3b5c36]/20"
             >
               Get in Touch
             </button>
@@ -150,14 +125,14 @@ export default function App() {
               <button
                 key={item}
                 onClick={() => scrollToSection(item)}
-                className="text-2xl font-serif-display text-left text-slate-800 hover:text-[#3b5c36] cursor-pointer border-b border-slate-100 pb-4"
+                className="text-xl font-serif-display text-left text-slate-800 hover:text-[#3b5c36] cursor-pointer border-b border-slate-100 pb-4"
               >
                 {item}
               </button>
             ))}
             <button 
               onClick={() => { setEnquiryOpen(true); setMobileMenuOpen(false); }}
-              className="text-2xl font-serif-display text-left text-[#3b5c36] cursor-pointer pt-4"
+              className="text-xl font-serif-display text-left text-[#3b5c36] cursor-pointer pt-4"
             >
               Enquire Now
             </button>
@@ -167,52 +142,17 @@ export default function App() {
 
       <main>
         {/* Hero Section */}
-        <section id="home" className="relative min-h-screen flex items-center justify-center pt-24 pb-20 overflow-hidden bg-slate-50">
-          <div className="absolute inset-0 z-0 bg-noise opacity-50" />
-          
-          <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex flex-col items-center">
-            
-            <img 
-              src="https://kwrv4maomvrojc0c.public.blob.vercel-storage.com/project/IMG_3188.PNG" 
-              alt="Kalash Icon" 
-              className="w-16 h-16 object-contain mb-8 opacity-80"
-              referrerPolicy="no-referrer"
-            />
-            
-            <h1 className="font-serif-display text-4xl md:text-5xl lg:text-6xl text-slate-900 mb-6 font-medium tracking-tight">
-              Crafting <span className="text-[#3b5c36] italic font-light">Experiences,</span><br/>
-              Shaping Lifestyles.
-            </h1>
-            <p className="text-slate-600 font-sans-body max-w-2xl mx-auto text-base md:text-lg mb-10 leading-relaxed">
-              We don't simply design buildings—we craft experiences, shape lifestyles, and create landmarks that inspire generations.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-center gap-4">
-              <button 
-                onClick={() => scrollToSection('projects')}
-                className="bg-[#3b5c36] text-white hover:bg-[#2c4728] font-mono-tech text-[11px] uppercase tracking-[0.2em] px-8 py-4 rounded-full transition-all duration-300 cursor-pointer shadow-xl shadow-[#3b5c36]/20"
-              >
-                View Our Work
-              </button>
-              <button 
-                onClick={() => setEnquiryOpen(true)}
-                className="bg-transparent border border-slate-300 text-slate-700 hover:border-[#3b5c36] hover:text-[#3b5c36] font-mono-tech text-[11px] uppercase tracking-[0.2em] px-8 py-4 rounded-full transition-all duration-300 cursor-pointer"
-              >
-                Start a Project
-              </button>
-            </div>
-          </div>
-        </section>
+        <HeroCarousel onEnquire={() => setEnquiryOpen(true)} />
 
         {/* 360 VR Section */}
         <section id="vr" className="py-24 px-6 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
               <div>
-                <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">Immersive Experience</span>
-                <h2 className="font-serif-display text-3xl md:text-4xl text-slate-900">360° Virtual Tours</h2>
+                <span className="text-[#3b5c36] font-montserrat text-xs tracking-widest uppercase mb-4 block">Immersive Experience</span>
+                <h2 className="font-serif-display text-xl md:text-3xl text-slate-900">360° Virtual Tours</h2>
               </div>
-              <p className="text-slate-600 font-sans-body text-sm max-w-md">
+              <p className="text-slate-600 font-sans-body text-xs max-w-md">
                 Step inside our designs before they are built. Use your mouse or touch to look around the virtual space and experience the architecture in true 360 degrees.
               </p>
             </div>
@@ -225,22 +165,18 @@ export default function App() {
 
         {/* Stats Section */}
         <section className="py-20 px-6 bg-white border-y border-slate-100 relative z-20">
-          <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
             <div>
               <StatsCounter end={2} suffix="+" />
-              <div className="text-slate-500 font-mono-tech text-[10px] uppercase tracking-widest font-bold">Years Experience</div>
+              <div className="text-slate-500 font-montserrat text-[10px] uppercase tracking-widest font-bold">Years Experience</div>
             </div>
             <div>
               <StatsCounter end={10} suffix="+" />
-              <div className="text-slate-500 font-mono-tech text-[10px] uppercase tracking-widest font-bold">Projects Completed</div>
-            </div>
-            <div>
-              <StatsCounter end={25} />
-              <div className="text-slate-500 font-mono-tech text-[10px] uppercase tracking-widest font-bold">Design Awards</div>
+              <div className="text-slate-500 font-montserrat text-[10px] uppercase tracking-widest font-bold">Projects Completed</div>
             </div>
             <div>
               <StatsCounter end={100} suffix="%" />
-              <div className="text-slate-500 font-mono-tech text-[10px] uppercase tracking-widest font-bold">Client Satisfaction</div>
+              <div className="text-slate-500 font-montserrat text-[10px] uppercase tracking-widest font-bold">Client Satisfaction</div>
             </div>
           </div>
         </section>
@@ -249,8 +185,8 @@ export default function App() {
         <section id="services" className="py-24 px-6 bg-slate-50">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
-              <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">Our Expertise</span>
-              <h2 className="font-serif-display text-3xl md:text-4xl text-slate-900">Services</h2>
+              <span className="text-[#3b5c36] font-montserrat text-xs tracking-widest uppercase mb-4 block">Our Expertise</span>
+              <h2 className="font-serif-display text-xl md:text-3xl text-slate-900">Services</h2>
             </div>
             <ServicesVisual />
           </div>
@@ -260,8 +196,8 @@ export default function App() {
         <section id="projects" className="py-24 px-6 bg-slate-50">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
-              <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">Selected Works</span>
-              <h2 className="font-serif-display text-3xl md:text-4xl text-slate-900">Portfolio</h2>
+              <span className="text-[#3b5c36] font-montserrat text-xs tracking-widest uppercase mb-4 block">Selected Works</span>
+              <h2 className="font-serif-display text-xl md:text-3xl text-slate-900">Portfolio</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -278,9 +214,9 @@ export default function App() {
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent flex flex-col justify-end p-6">
-                    <h3 className="font-serif-display text-2xl text-white mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">{project.title}</h3>
+                    <h3 className="font-serif-display text-xl text-white mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">{project.title}</h3>
                     <div className="flex items-center gap-2 text-[#a8d3a0] opacity-0 group-hover:opacity-100 transition-all duration-300">
-                      <span className="font-mono-tech text-[10px] uppercase tracking-wider">View Project</span>
+                      <span className="font-montserrat text-[10px] uppercase tracking-wider">View Project</span>
                       <ArrowRight className="w-4 h-4" />
                     </div>
                   </div>
@@ -290,37 +226,15 @@ export default function App() {
           </div>
         </section>
 
-        {/* Process Section */}
-        <section id="process" className="py-24 px-6 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
-              <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">Methodology</span>
-              <h2 className="font-serif-display text-3xl md:text-4xl text-slate-900">Our Process</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-              {processSteps.map((step, idx) => (
-                <div key={idx} className="relative p-8 border border-slate-100 bg-slate-50 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 rounded-3xl overflow-hidden group">
-                  <div className="text-8xl font-serif-display text-slate-100 absolute -bottom-4 -right-4 group-hover:text-[#3b5c36]/10 transition-colors font-bold pointer-events-none">
-                    0{idx + 1}
-                  </div>
-                  <div className="relative z-10">
-                    <span className="text-[#3b5c36] font-mono-tech text-[10px] uppercase tracking-widest font-bold block mb-3">Step {idx + 1}</span>
-                    <h3 className="font-serif-display text-xl text-slate-900 mb-3">{step.title}</h3>
-                    <p className="text-slate-600 font-sans-body text-sm leading-relaxed">{step.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* Studio Section */}
+        <StudioCareers />
 
         {/* Why Choose Us */}
         <section className="py-24 px-6 bg-slate-50">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
-              <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">Advantage</span>
-              <h2 className="font-serif-display text-3xl md:text-4xl text-slate-900">Why Choose Us</h2>
+              <span className="text-[#3b5c36] font-montserrat text-xs tracking-widest uppercase mb-4 block">Advantage</span>
+              <h2 className="font-serif-display text-xl md:text-3xl text-slate-900">Why Choose Us</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -336,8 +250,8 @@ export default function App() {
                   <div className="w-10 h-10 rounded-full bg-[#3b5c36]/10 flex items-center justify-center text-[#3b5c36]">
                     <CheckCircle2 className="w-5 h-5" />
                   </div>
-                  <h3 className="font-serif-display text-lg text-slate-900">{feature.title}</h3>
-                  <p className="text-slate-600 font-sans-body text-sm leading-relaxed">{feature.desc}</p>
+                  <h3 className="font-serif-display text-sm text-slate-900">{feature.title}</h3>
+                  <p className="text-slate-600 font-sans-body text-xs leading-relaxed">{feature.desc}</p>
                 </div>
               ))}
             </div>
@@ -348,26 +262,26 @@ export default function App() {
         <section id="about" className="py-32 px-6 bg-white border-t border-slate-100">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-16">
-              <span className="text-[#3b5c36] font-mono-tech text-xs tracking-widest uppercase mb-4 block">About Us</span>
-              <h2 className="font-serif-display text-3xl md:text-4xl text-slate-900">Designing Spaces.<br/>Building Trust.<br/>Creating Timeless Experiences.</h2>
+              <span className="text-[#3b5c36] font-montserrat text-xs tracking-widest uppercase mb-4 block">About Us</span>
+              <h2 className="font-serif-display text-xl md:text-3xl text-slate-900">Designing Spaces.<br/>Building Trust.<br/>Creating Timeless Experiences.</h2>
             </div>
             
             <div className="grid md:grid-cols-2 gap-16 mt-20">
               <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100">
-                <h3 className="font-serif-display text-2xl text-[#1c356b] mb-6 flex items-center gap-3">
+                <h3 className="font-serif-display text-xl text-[#1c356b] mb-6 flex items-center gap-3">
                   <Eye className="w-6 h-6 text-[#3b5c36]" />
                   Vision
                 </h3>
-                <p className="text-slate-700 font-sans-body leading-relaxed text-sm">
+                <p className="text-slate-700 font-sans-body leading-relaxed text-xs">
                   To become a trusted and innovative architectural and interior design firm, recognized for creating timeless spaces that enrich lives, inspire communities, and set new standards in design excellence.
                 </p>
               </div>
               <div className="bg-slate-50 p-8 rounded-3xl border border-slate-100">
-                <h3 className="font-serif-display text-2xl text-[#1c356b] mb-6 flex items-center gap-3">
+                <h3 className="font-serif-display text-xl text-[#1c356b] mb-6 flex items-center gap-3">
                   <Compass className="w-6 h-6 text-[#3b5c36]" />
                   Mission
                 </h3>
-                <p className="text-slate-700 font-sans-body leading-relaxed text-sm">
+                <p className="text-slate-700 font-sans-body leading-relaxed text-xs">
                   At Priad Architects, our mission is to transform ideas into thoughtfully designed spaces through creativity, technical expertise, and meticulous attention to detail. We are committed to delivering high-quality architectural and interior design solutions that balance aesthetics, functionality, sustainability, and value. By building strong relationships with our clients, we strive to exceed expectations on every project.
                 </p>
               </div>
@@ -383,21 +297,24 @@ export default function App() {
             {/* Brand & Intro */}
             <div className="col-span-1 lg:col-span-1">
               <div className="flex flex-col items-start mb-6">
-                <div className="font-serif-display text-2xl tracking-[0.15em] font-bold text-white uppercase leading-none">
+                <div className="font-serif-display text-xl tracking-[0.15em] font-bold text-white uppercase leading-none">
                   Priad Architects
                 </div>
                 <div className="text-[14px] font-cormorant italic text-[#a8d3a0] mt-2 leading-none">
                   Building legacy.
                 </div>
               </div>
-              <p className="text-slate-400 font-sans-body text-sm leading-relaxed mb-6">
+              <p className="text-slate-400 font-sans-body text-xs leading-relaxed mb-6">
                 Delivering innovative, sustainable, and timeless spaces that redefine modern living and enrich communities.
               </p>
               <div className="flex items-center gap-4">
-                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:bg-[#3b5c36] hover:text-white transition-colors">
+                <a href="https://www.instagram.com/priad_architects?utm_source=qr" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:bg-[#3b5c36] hover:text-white transition-colors">
                   <Instagram className="w-4 h-4" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:bg-[#3b5c36] hover:text-white transition-colors">
+                <a href="https://www.facebook.com/share/1DX6CBpDsi/?mibextid=wwXIfr" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:bg-[#3b5c36] hover:text-white transition-colors">
+                  <Facebook className="w-4 h-4" />
+                </a>
+                <a href="https://www.linkedin.com/in/priad-architects-a5b5b1351/" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-slate-300 hover:bg-[#3b5c36] hover:text-white transition-colors">
                   <Linkedin className="w-4 h-4" />
                 </a>
               </div>
@@ -405,11 +322,11 @@ export default function App() {
 
             {/* Quick Links */}
             <div>
-              <h4 className="font-mono-tech text-xs tracking-widest uppercase text-white mb-6">Quick Links</h4>
+              <h4 className="font-montserrat text-xs tracking-widest uppercase text-white mb-6">Quick Links</h4>
               <ul className="space-y-4">
-                {['Home', 'Services', 'Projects', 'Process', 'About'].map((item) => (
+                {['Home', 'Services', 'Projects', 'Studio', 'About'].map((item) => (
                   <li key={item}>
-                    <button onClick={() => scrollToSection(item)} className="text-slate-400 hover:text-white text-sm transition-colors cursor-pointer">
+                    <button onClick={() => scrollToSection(item)} className="text-slate-400 hover:text-white text-xs transition-colors cursor-pointer">
                       {item}
                     </button>
                   </li>
@@ -419,19 +336,19 @@ export default function App() {
 
             {/* Contact Info */}
             <div>
-              <h4 className="font-mono-tech text-xs tracking-widest uppercase text-white mb-6">Contact Us</h4>
+              <h4 className="font-montserrat text-xs tracking-widest uppercase text-white mb-6">Contact Us</h4>
               <ul className="space-y-4">
-                <li className="flex items-start gap-3 text-slate-400 text-sm">
+                <li className="flex items-start gap-3 text-slate-400 text-xs">
                   <MapPin className="w-5 h-5 text-[#a8d3a0] shrink-0 mt-0.5" />
                   <span>PRIAD ARCHITECTS<br/>Chinthamani Nagar, Kuppakonam Pudur<br/>Coimbatore, Tamil Nadu 641038</span>
                 </li>
-                <li className="flex items-center gap-3 text-slate-400 text-sm">
+                <li className="flex items-center gap-3 text-slate-400 text-xs">
                   <Phone className="w-5 h-5 text-[#a8d3a0] shrink-0" />
                   <span>+91 90437 21008</span>
                 </li>
-                <li className="flex items-center gap-3 text-slate-400 text-sm">
+                <li className="flex items-center gap-3 text-slate-400 text-xs">
                   <Mail className="w-5 h-5 text-[#a8d3a0] shrink-0" />
-                  <span>priadarchitects@gmail.com</span>
+                  <span>priad2728@gmail.com</span>
                 </li>
               </ul>
             </div>
@@ -469,13 +386,13 @@ export default function App() {
     <div className="fixed bottom-0 left-0 right-0 z-[100] md:hidden flex bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-20px_40px_rgba(0,0,0,0.15)] border-t border-slate-200">
       <a href="tel:+919043721008" className="flex-1 flex items-center justify-center gap-2 py-4 bg-slate-900 text-white hover:bg-slate-800 transition-colors active:bg-slate-700 border-r border-slate-200">
         <Phone className="w-4 h-4 text-white" />
-        <span className="text-[11px] font-mono-tech uppercase tracking-widest font-bold">Call Us</span>
+        <span className="text-[11px] font-montserrat uppercase tracking-widest font-bold">Call Us</span>
       </a>
       <a href="https://wa.me/919043721008" target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-2 py-4 bg-[#25D366] text-white hover:bg-[#128C7E] transition-colors active:bg-[#0c6b5f]">
         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
         </svg>
-        <span className="text-[11px] font-mono-tech uppercase tracking-widest font-bold">WhatsApp</span>
+        <span className="text-[11px] font-montserrat uppercase tracking-widest font-bold">WhatsApp</span>
       </a>
     </div>
 
@@ -508,23 +425,23 @@ export default function App() {
               />
               <div className="grid md:grid-cols-3 gap-12">
                 <div className="md:col-span-2">
-                  <h2 className="font-serif-display text-4xl text-slate-900 mb-6">{project.title}</h2>
-                  <p className="text-slate-600 font-sans-body leading-relaxed text-lg">
+                  <h2 className="font-serif-display text-3xl text-slate-900 mb-6">{project.title}</h2>
+                  <p className="text-slate-600 font-sans-body leading-relaxed text-sm">
                     {project.description}
                   </p>
                 </div>
                 <div>
                   <div className="border-t border-slate-200 pt-6">
-                    <span className="text-[#3b5c36] font-mono-tech text-xs uppercase tracking-wider block mb-2 font-bold">Category</span>
-                    <span className="text-slate-700 font-sans-body text-sm">Architecture / Interior Design</span>
+                    <span className="text-[#3b5c36] font-montserrat text-xs uppercase tracking-wider block mb-2 font-bold">Category</span>
+                    <span className="text-slate-700 font-sans-body text-xs">Architecture / Interior Design</span>
                   </div>
                   <div className="border-t border-slate-200 pt-6 mt-6">
-                    <span className="text-[#3b5c36] font-mono-tech text-xs uppercase tracking-wider block mb-2 font-bold">Status</span>
-                    <span className="text-slate-700 font-sans-body text-sm">Completed</span>
+                    <span className="text-[#3b5c36] font-montserrat text-xs uppercase tracking-wider block mb-2 font-bold">Status</span>
+                    <span className="text-slate-700 font-sans-body text-xs">Completed</span>
                   </div>
                   <button 
                     onClick={() => { setSelectedProject(null); setEnquiryOpen(true); }}
-                    className="w-full mt-8 bg-[#3b5c36] text-white py-4 rounded-xl font-mono-tech text-xs uppercase tracking-widest hover:bg-[#2c4728] transition-colors shadow-lg"
+                    className="w-full mt-8 bg-[#3b5c36] text-white py-4 rounded-xl font-montserrat text-xs uppercase tracking-widest hover:bg-[#2c4728] transition-colors shadow-lg"
                   >
                     Enquire Similar
                   </button>

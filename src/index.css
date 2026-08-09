@@ -2,19 +2,13 @@
 
 @layer utilities {
   .font-serif-display {
-    font-family: 'Cinzel', 'Cormorant Garamond', Georgia, serif;
-  }
-  .font-syne {
-    font-family: 'Syne', sans-serif;
-  }
-  .font-cormorant {
-    font-family: 'Cormorant Garamond', serif;
-  }
-  .font-mono-tech {
-    font-family: 'Space Grotesk', monospace;
+    font-family: 'Cormorant Garamond', Georgia, serif;
   }
   .font-sans-body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
+  }
+  .font-montserrat {
+    font-family: 'Montserrat', sans-serif;
   }
 }
 

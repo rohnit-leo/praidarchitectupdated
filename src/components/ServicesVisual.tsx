@@ -43,7 +43,7 @@ const categories = [
   {
     id: 'visualization',
     title: 'Visualization',
-    image: 'https://images.unsplash.com/photo-1545193544-312983719627?auto=format&fit=crop&w=1200&q=80',
+    image: '/src/assets/images/person_in_vr_visualisation_1786283784621.jpg',
     items: [
       'Photorealistic 3D Renders',
       'Walkthrough Animations',
@@ -53,7 +53,7 @@ const categories = [
   {
     id: 'support',
     title: 'Project Support',
-    image: 'https://images.unsplash.com/photo-1504307651254-35680f356f67?auto=format&fit=crop&w=1200&q=80',
+    image: '/src/assets/images/project_support_architecture_1786283800995.jpg',
     items: [
       'Site Consultation',
       'Material Selection',
@@ -82,7 +82,7 @@ export function ServicesVisual() {
                 : 'bg-transparent border-transparent hover:bg-slate-50'
             }`}
           >
-            <h3 className={`font-serif-display text-xl md:text-2xl transition-colors ${
+            <h3 className={`font-serif-display text-lg md:text-xl transition-colors ${
               activeCategory === category.id ? 'text-[#3b5c36]' : 'text-slate-500'
             }`}>
               {category.title}
@@ -114,7 +114,7 @@ export function ServicesVisual() {
                 {currentData.items.map((item, idx) => (
                   <div key={idx} className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-[#3b5c36] shrink-0 mt-0.5" />
-                    <span className="text-slate-600 font-sans-body text-sm leading-relaxed">{item}</span>
+                    <span className="text-slate-600 font-sans-body text-xs leading-relaxed">{item}</span>
                   </div>
                 ))}
               </div>
