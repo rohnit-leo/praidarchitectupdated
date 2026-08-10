@@ -81,7 +81,7 @@ export default function App() {
             </div>
             <div className="flex flex-col items-start justify-center">
               <div className="font-serif-display text-base tracking-[0.15em] font-bold uppercase leading-none text-[#3b5c36]">
-                Priad Architects
+                PRIAD ARCHITECTS
               </div>
               <div className="text-[12px] font-cormorant italic text-[#1c356b] mt-1 leading-none">
                 Building legacy.
