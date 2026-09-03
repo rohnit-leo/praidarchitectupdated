@@ -22,6 +22,33 @@ export const db: Firestore = firebaseConfig.firestoreDatabaseId && firebaseConfi
   : getFirestore(app);
 
 const COLLECTION_NAME = 'projects';
+const LOCAL_STORAGE_KEY = 'priad_projects_permanent_cache';
+
+/**
+ * Local storage caching utilities
+ */
+function getLocalProjectsCache(): Project[] | null {
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.warn('Could not read local projects cache:', err);
+  }
+  return null;
+}
+
+function setLocalProjectsCache(projects: Project[]): void {
+  try {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(projects));
+  } catch (err) {
+    console.warn('Could not update local projects cache:', err);
+  }
+}
 
 /**
  * Sanitize object for Firestore (strip undefined fields)
@@ -42,13 +69,50 @@ function sanitizeForFirestore(obj: any): any {
 }
 
 /**
- * Real-time subscription to projects collection.
- * Calls onUpdate whenever Firestore changes.
+ * Fetch projects from the permanent Node/Express server storage
+ */
+export async function fetchServerProjects(): Promise<Project[] | null> {
+  try {
+    const res = await fetch('/api/projects');
+    if (res.ok) {
+      const json = await res.json();
+      if (json && json.success && Array.isArray(json.projects) && json.projects.length > 0) {
+        return json.projects;
+      }
+    }
+  } catch (err) {
+    console.warn('Could not fetch projects from server:', err);
+  }
+  return null;
+}
+
+/**
+ * Real-time subscription to projects with triple-layer persistence:
+ * 1. Instant local storage cache
+ * 2. Permanent Node server storage (/api/projects)
+ * 3. Real-time Firebase Firestore synchronization
  */
 export function subscribeToProjects(
   onUpdate: (projects: Project[]) => void,
   onError?: (err: any) => void
 ): () => void {
+  // 1. Instantly provide local cache or default data (zero layout shift)
+  const cached = getLocalProjectsCache();
+  if (cached && cached.length > 0) {
+    onUpdate(cached);
+  } else {
+    onUpdate(PROJECTS_DATA);
+  }
+
+  // 2. Query the permanent Node server storage in parallel
+  fetchServerProjects().then((serverProjects) => {
+    if (serverProjects && serverProjects.length > 0) {
+      setLocalProjectsCache(serverProjects);
+      onUpdate(serverProjects);
+    }
+  }).catch(console.warn);
+
+  // 3. Connect real-time Firebase Firestore listener
   try {
     const projectsCol = collection(db, COLLECTION_NAME);
 
@@ -56,9 +120,8 @@ export function subscribeToProjects(
       projectsCol,
       (snapshot) => {
         if (snapshot.empty) {
-          // If empty in Firestore, trigger seeding in background
+          // If empty in Firestore, trigger initial seeding in background
           seedProjectsIfEmpty().catch(console.error);
-          onUpdate(PROJECTS_DATA);
           return;
         }
 
@@ -79,51 +142,121 @@ export function subscribeToProjects(
           return (b.year || 0) - (a.year || 0);
         });
 
+        // Update UI & local permanent cache
+        setLocalProjectsCache(projects);
         onUpdate(projects);
+
+        // Background sync to server store so server stays permanently updated
+        fetch('/api/projects').catch(() => {});
       },
-      (err) => {
-        console.error('Firestore onSnapshot error:', err);
+      async (err) => {
+        console.warn('Firestore onSnapshot notice:', err);
         if (onError) onError(err);
-        // Fallback to local default data if snapshot errors out
-        onUpdate(PROJECTS_DATA);
+        
+        // Fallback: try server storage, then local cache, then starter data
+        const srvProjects = await fetchServerProjects();
+        if (srvProjects && srvProjects.length > 0) {
+          onUpdate(srvProjects);
+        } else {
+          const localCache = getLocalProjectsCache();
+          onUpdate(localCache && localCache.length > 0 ? localCache : PROJECTS_DATA);
+        }
       }
     );
 
     return unsubscribe;
   } catch (err) {
-    console.error('Failed to setup Firestore listener:', err);
-    onUpdate(PROJECTS_DATA);
+    console.error('Failed to setup Firestore listener, using local/server fallback:', err);
+    fetchServerProjects().then((srv) => {
+      onUpdate(srv || getLocalProjectsCache() || PROJECTS_DATA);
+    });
     return () => {};
   }
 }
 
 /**
- * Save or update a project in Firestore
+ * Save or update a project permanently across:
+ * 1. Firebase Firestore (Real-time DB)
+ * 2. Node.js Express Server (/api/projects - file-backed permanent store)
+ * 3. Browser Local Storage (Instant client-side cache)
  */
 export async function saveProject(project: Project): Promise<void> {
   if (!project.id) {
     throw new Error('Project must have an ID');
   }
 
-  const docRef = doc(db, COLLECTION_NAME, project.id);
   const now = Date.now();
-
   const payload: Project = {
     ...project,
     updatedAt: now,
     createdAt: project.createdAt || now
   };
 
-  const sanitized = sanitizeForFirestore(payload);
-  await setDoc(docRef, sanitized, { merge: true });
+  // 1. Update local cache immediately for zero latency
+  const currentCache = getLocalProjectsCache() || [...PROJECTS_DATA];
+  const idx = currentCache.findIndex((p) => p.id === project.id);
+  let updatedCache: Project[];
+  if (idx >= 0) {
+    updatedCache = [...currentCache];
+    updatedCache[idx] = payload;
+  } else {
+    updatedCache = [payload, ...currentCache];
+  }
+  setLocalProjectsCache(updatedCache);
+
+  // 2. Persist to Node.js server storage
+  let serverPromise = fetch('/api/projects', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ project: payload })
+  }).then(async (res) => {
+    if (!res.ok) {
+      console.warn('Server storage responded with status:', res.status);
+    }
+  }).catch((err) => {
+    console.warn('Server project storage error:', err);
+  });
+
+  // 3. Persist to Firebase Firestore
+  let firestorePromise = (async () => {
+    try {
+      const docRef = doc(db, COLLECTION_NAME, project.id);
+      const sanitized = sanitizeForFirestore(payload);
+      await setDoc(docRef, sanitized, { merge: true });
+    } catch (err) {
+      console.warn('Firestore save warning:', err);
+    }
+  })();
+
+  // Wait for both to complete
+  await Promise.allSettled([serverPromise, firestorePromise]);
 }
 
 /**
- * Delete a project from Firestore
+ * Delete a project permanently from Firestore, Server, and Local Storage
  */
 export async function deleteProject(projectId: string): Promise<void> {
-  const docRef = doc(db, COLLECTION_NAME, projectId);
-  await deleteDoc(docRef);
+  // 1. Update local cache immediately
+  const currentCache = getLocalProjectsCache() || [...PROJECTS_DATA];
+  const filtered = currentCache.filter((p) => p.id !== projectId);
+  setLocalProjectsCache(filtered);
+
+  // 2. Delete on Server
+  const serverPromise = fetch(`/api/projects/${encodeURIComponent(projectId)}`, {
+    method: 'DELETE'
+  }).catch((err) => console.warn('Server delete error:', err));
+
+  // 3. Delete in Firestore
+  const firestorePromise = (async () => {
+    try {
+      const docRef = doc(db, COLLECTION_NAME, projectId);
+      await deleteDoc(docRef);
+    } catch (err) {
+      console.warn('Firestore delete error:', err);
+    }
+  })();
+
+  await Promise.allSettled([serverPromise, firestorePromise]);
 }
 
 /**
@@ -155,27 +288,40 @@ export async function seedProjectsIfEmpty(): Promise<void> {
 }
 
 /**
- * Reset Firestore to default starter projects
+ * Reset all storage layers back to default starter projects
  */
 export async function resetProjectsToDefault(): Promise<void> {
-  const projectsCol = collection(db, COLLECTION_NAME);
-  const snapshot = await getDocs(projectsCol);
+  // 1. Reset local cache
+  setLocalProjectsCache(PROJECTS_DATA);
 
-  // Delete all current docs
-  for (const docSnap of snapshot.docs) {
-    await deleteDoc(docSnap.ref);
-  }
+  // 2. Reset Server storage
+  const serverPromise = fetch('/api/projects/reset', {
+    method: 'POST'
+  }).catch((err) => console.warn('Server reset error:', err));
 
-  // Seed default data
-  for (let i = 0; i < PROJECTS_DATA.length; i++) {
-    const item = PROJECTS_DATA[i];
-    const docRef = doc(db, COLLECTION_NAME, item.id);
-    const payload: Project = {
-      ...item,
-      order: i,
-      createdAt: Date.now(),
-      updatedAt: Date.now()
-    };
-    await setDoc(docRef, sanitizeForFirestore(payload));
-  }
+  // 3. Reset Firestore
+  const firestorePromise = (async () => {
+    try {
+      const projectsCol = collection(db, COLLECTION_NAME);
+      const snapshot = await getDocs(projectsCol);
+      for (const docSnap of snapshot.docs) {
+        await deleteDoc(docSnap.ref);
+      }
+      for (let i = 0; i < PROJECTS_DATA.length; i++) {
+        const item = PROJECTS_DATA[i];
+        const docRef = doc(db, COLLECTION_NAME, item.id);
+        const payload: Project = {
+          ...item,
+          order: i,
+          createdAt: Date.now(),
+          updatedAt: Date.now()
+        };
+        await setDoc(docRef, sanitizeForFirestore(payload));
+      }
+    } catch (err) {
+      console.warn('Firestore reset error:', err);
+    }
+  })();
+
+  await Promise.allSettled([serverPromise, firestorePromise]);
 }

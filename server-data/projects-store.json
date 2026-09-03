@@ -1,0 +1,223 @@
+[
+  {
+    "id": "cantilever-monolith-villa",
+    "title": "The Monolith Cantilever Villa",
+    "subtitle": "Private Ultra-Luxury Residence on Sloped Cliffside",
+    "category": "Villa & Residence",
+    "location": "Malibu Hills, California / Pristine Ridge",
+    "areaSqFt": 12500,
+    "year": 2025,
+    "status": "Completed",
+    "heroImage": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=80",
+    "galleryImages": [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "beforeImage": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+    "afterImage": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80",
+    "blueprintImage": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
+    "conceptDescription": "Suspended dramatically over a steep rocky incline, The Monolith cantilever villa bridges structural daring with zen minimalism. Utilizing post-tensioned board-formed concrete slabs and column-free structural glass facades, the residence floats effortlessly above the coastline.",
+    "keyMaterials": [
+      "Board-Formed Architectural Concrete",
+      "Thermally Broken Triple-Glazed Low-E Glass",
+      "Charred Japanese Shou Sugi Ban Cedar",
+      "Honed Volakas Greek Marble Slabs"
+    ],
+    "architecturalStyle": "Modern Brutalist Minimalism",
+    "structuralEngineer": "Somerset & Vance Structural Labs",
+    "awards": [
+      "International Architecture Award 2025 - Best Private Residence",
+      "Architectural Review Luxury Living Winner",
+      "LEED Platinum Residential Certification"
+    ],
+    "floorPlanLevels": [
+      {
+        "levelName": "Level 01 - Main Living & Cantilever Pool Deck",
+        "blueprintUrl": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
+        "hotspots": [
+          {
+            "x": 35,
+            "y": 40,
+            "roomName": "Double-Height Grand Atrium",
+            "size": "1,850 Sq Ft",
+            "description": "Seamless glass enclosure with 24ft ceiling clearance and sunken perimeter fire trench.",
+            "imageUrl": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80"
+          },
+          {
+            "x": 70,
+            "y": 25,
+            "roomName": "Cantilever Infinity Water Pavilion",
+            "size": "950 Sq Ft Pool Deck",
+            "description": "18-meter glass-bottom cantilevered pool extending over the 40-degree cliff face.",
+            "imageUrl": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80"
+          },
+          {
+            "x": 55,
+            "y": 75,
+            "roomName": "Gourmet Sculpture Kitchen",
+            "size": "720 Sq Ft",
+            "description": "Custom monolithic Travertine island with concealed Gaggenau appliances and motor-hidden cabinetry.",
+            "imageUrl": "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&w=800&q=80"
+          }
+        ]
+      },
+      {
+        "levelName": "Level 02 - Master Sanctuary & Observatory",
+        "blueprintUrl": "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?auto=format&fit=crop&w=1200&q=80",
+        "hotspots": [
+          {
+            "x": 45,
+            "y": 50,
+            "roomName": "Master Horizon Suite",
+            "size": "1,400 Sq Ft",
+            "description": "Panoramic glass bedroom chamber with integrated automated acoustic privacy shades.",
+            "imageUrl": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nexus-commercial-hq",
+    "title": "NEXUS Corporate Tower & Innovation Hub",
+    "subtitle": "Net-Zero Commercial High-Rise & Master Plan",
+    "category": "Commercial Tower",
+    "location": "Financial District Plaza, Financial Hub",
+    "areaSqFt": 480000,
+    "year": 2024,
+    "status": "Completed",
+    "heroImage": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80",
+    "galleryImages": [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "beforeImage": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80",
+    "afterImage": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80",
+    "blueprintImage": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
+    "conceptDescription": "A 38-story landmark tower featuring an organic biophilic exoskeleton, wind-harvesting sky terraces, and smart kinetic facade louvering that adjusts dynamically to solar angles.",
+    "keyMaterials": [
+      "Recycled Structural Ultra-High Performance Concrete",
+      "Kinetic Double-Skin Photovoltaic Glazing",
+      "Anodized Aerospace Aluminum Fins",
+      "Reclaimed Teak Acoustic Louvers"
+    ],
+    "architecturalStyle": "Futuristic Parametric High-Tech",
+    "structuralEngineer": "Arup Global Engineering Consultants",
+    "awards": [
+      "World Architecture Festival Commercial Building of the Year",
+      "BREEAM Outstanding Sustainable Design Award"
+    ],
+    "floorPlanLevels": [
+      {
+        "levelName": "Ground Level - Public Atrium & Plaza",
+        "blueprintUrl": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
+        "hotspots": [
+          {
+            "x": 50,
+            "y": 50,
+            "roomName": "Biophilic Quadrangle Plaza",
+            "size": "22,000 Sq Ft",
+            "description": "Triple-height indoor tropical forest atrium with natural passive air circulation chimneys.",
+            "imageUrl": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "zenith-penthouse-makeover",
+    "title": "The Zenith Penthouse Sky Pavilion",
+    "subtitle": "Ultra-Luxury Interior Transformation & Lighting Architecture",
+    "category": "Interior Makeover",
+    "location": "Metropolitan Sky Tower, Floor 52",
+    "areaSqFt": 6200,
+    "year": 2025,
+    "status": "Completed",
+    "heroImage": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=80",
+    "galleryImages": [
+      "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "beforeImage": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+    "afterImage": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80",
+    "blueprintImage": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
+    "conceptDescription": "Complete spatial overhaul converting a compartmentalized 1990s floor plan into a seamless 360-degree open observatory with automated curved timber partitions, bronze accents, and indirect architectural lighting.",
+    "keyMaterials": [
+      "Silk-Brushed Grigio Carnico Marble",
+      "Custom Steam-Bent Smoked Oak Wood",
+      "Satin Brushed Champagne Gold Brass",
+      "Acoustic Felt Micro-Suede Ceilings"
+    ],
+    "architecturalStyle": "Luxury Sculptural Minimalism",
+    "structuralEngineer": "PRIAD In-House Interior Engineering Group",
+    "awards": [
+      "Elle Decor Grand Prix Interior Design 2025"
+    ],
+    "floorPlanLevels": [
+      {
+        "levelName": "Penthouse Main Floor Plan",
+        "blueprintUrl": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
+        "hotspots": [
+          {
+            "x": 40,
+            "y": 30,
+            "roomName": "Curved Wine Library & Tasting Lounge",
+            "size": "580 Sq Ft",
+            "description": "Temperature-controlled brass and glass wine tower holding 1,200 rare vintage bottles.",
+            "imageUrl": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=800&q=80"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "solstice-cultural-center",
+    "title": "Solstice Cultural & Performing Arts Center",
+    "subtitle": "Institutional Public Landmark & Acoustic Engineering",
+    "category": "Institutional",
+    "location": "Civic Cultural Waterfront Park",
+    "areaSqFt": 185000,
+    "year": 2024,
+    "status": "Completed",
+    "heroImage": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1600&q=80",
+    "galleryImages": [
+      "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "beforeImage": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+    "afterImage": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+    "blueprintImage": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
+    "conceptDescription": "Inspired by natural soundwave geometry, the Solstice Performing Arts Pavilion combines sweeping titanium-zinc roof shells with state-of-the-art acoustic timber shell engineering.",
+    "keyMaterials": [
+      "Pre-Patinated Titanium Zinc Shell Paneling",
+      "Acoustic Oregon Pine Ribbing",
+      "Self-Cleaning Hydrophobic Glass"
+    ],
+    "architecturalStyle": "Organic Parametric Architecture",
+    "structuralEngineer": "Buro Happold Structural Engineering",
+    "awards": [
+      "RIBA International Award for Excellence",
+      "AIA Civic Design Gold Honor"
+    ],
+    "floorPlanLevels": [
+      {
+        "levelName": "Auditorium Level - Concert Hall",
+        "blueprintUrl": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80",
+        "hotspots": [
+          {
+            "x": 50,
+            "y": 50,
+            "roomName": "1,800-Seat Acoustic Concert Hall",
+            "size": "45,000 Sq Ft",
+            "description": "Adjustable timber acoustic reflectors designed with computational ray tracing algorithms.",
+            "imageUrl": "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80"
+          }
+        ]
+      }
+    ]
+  }
+]

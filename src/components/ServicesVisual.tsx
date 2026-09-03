@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import vrVisualisationImg from '../assets/images/person_in_vr_visualisation_1786283784621.jpg';
+import projectSupportImg from '../assets/images/project_support_architecture_1786283800995.jpg';
 
 const categories = [
   {
     id: 'architecture',
     title: 'Architectural Design',
     image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+    fallback: '/assets/images/hero_villa_twilight_1786284430616.jpg',
     items: [
       'High rise buildings/Apartments',
       'Residential Architecture',
@@ -20,6 +23,7 @@ const categories = [
     id: 'interior',
     title: 'Interior Design',
     image: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80',
+    fallback: '/assets/images/hero_luxury_interior_1786284466223.jpg',
     items: [
       'Home Interiors',
       'Office Interiors',
@@ -32,6 +36,7 @@ const categories = [
     id: 'documentation',
     title: 'Design & Documentation',
     image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80',
+    fallback: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80',
     items: [
       '2D Floor Plans',
       'Working Drawings',
@@ -43,7 +48,9 @@ const categories = [
   {
     id: 'visualization',
     title: 'Visualization',
-    image: '/src/assets/images/person_in_vr_visualisation_1786283784621.jpg',
+    image: vrVisualisationImg,
+    fallback: '/assets/images/person_in_vr_visualisation_1786283784621.jpg',
+    onlineFallback: 'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&fit=crop&w=1200&q=80',
     items: [
       'Photorealistic 3D Renders',
       'Walkthrough Animations',
@@ -53,7 +60,9 @@ const categories = [
   {
     id: 'support',
     title: 'Project Support',
-    image: '/src/assets/images/project_support_architecture_1786283800995.jpg',
+    image: projectSupportImg,
+    fallback: '/assets/images/project_support_architecture_1786283800995.jpg',
+    onlineFallback: 'https://images.unsplash.com/photo-1541888946425-d0fbb186156a?auto=format&fit=crop&w=1200&q=80',
     items: [
       'Site Consultation',
       'Material Selection',
@@ -106,7 +115,15 @@ export function ServicesVisual() {
                 <img 
                   src={currentData.image} 
                   alt={currentData.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-opacity duration-500"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (currentData.fallback && target.src !== currentData.fallback) {
+                      target.src = currentData.fallback;
+                    } else if (currentData.onlineFallback && target.src !== currentData.onlineFallback) {
+                      target.src = currentData.onlineFallback;
+                    }
+                  }}
                 />
               </div>
               

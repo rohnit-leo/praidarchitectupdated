@@ -1,12 +1,85 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
+import { PROJECTS_DATA } from "./src/data/projects";
 
 const app = express();
 const PORT = 3000;
 
-app.use(express.json());
+// Increase payload limits for base64 direct image uploads from admin panel
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+// Server-side permanent storage file paths
+const SERVER_DATA_DIR = path.join(process.cwd(), "server-data");
+const PROJECTS_FILE = path.join(SERVER_DATA_DIR, "projects-store.json");
+const SETTINGS_FILE = path.join(SERVER_DATA_DIR, "settings-store.json");
+
+function ensureServerData() {
+  try {
+    if (!fs.existsSync(SERVER_DATA_DIR)) {
+      fs.mkdirSync(SERVER_DATA_DIR, { recursive: true });
+    }
+    if (!fs.existsSync(PROJECTS_FILE)) {
+      fs.writeFileSync(PROJECTS_FILE, JSON.stringify(PROJECTS_DATA, null, 2), "utf-8");
+    }
+    if (!fs.existsSync(SETTINGS_FILE)) {
+      fs.writeFileSync(
+        SETTINGS_FILE,
+        JSON.stringify(
+          {
+            googleVerificationCode: "google5c5874fddee15bd4",
+            updatedAt: Date.now(),
+          },
+          null,
+          2
+        ),
+        "utf-8"
+      );
+    }
+  } catch (err) {
+    console.error("Error initializing server-data storage:", err);
+  }
+}
+
+function readStoredProjects(): any[] {
+  ensureServerData();
+  try {
+    const raw = fs.readFileSync(PROJECTS_FILE, "utf-8");
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error("Error reading projects-store.json:", err);
+    return PROJECTS_DATA;
+  }
+}
+
+function writeStoredProjects(projects: any[]): void {
+  ensureServerData();
+  fs.writeFileSync(PROJECTS_FILE, JSON.stringify(projects, null, 2), "utf-8");
+}
+
+function readStoredSettings(): Record<string, any> {
+  ensureServerData();
+  try {
+    const raw = fs.readFileSync(SETTINGS_FILE, "utf-8");
+    return JSON.parse(raw);
+  } catch (err) {
+    return { googleVerificationCode: "google5c5874fddee15bd4" };
+  }
+}
+
+function writeStoredSettings(settings: Record<string, any>): void {
+  ensureServerData();
+  fs.writeFileSync(SETTINGS_FILE, JSON.stringify(settings, null, 2), "utf-8");
+}
+
+// Google Search Console Site Verification HTML file route
+app.get("/google5c5874fddee15bd4.html", (req, res) => {
+  res.header("Content-Type", "text/html");
+  res.send("google-site-verification: google5c5874fddee15bd4.html");
+});
 
 // Initialize Gemini Client Lazily if key present
 let aiClient: GoogleGenAI | null = null;
@@ -26,9 +99,88 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", studio: "PRIAD ARCHITECTS", timestamp: new Date().toISOString() });
 });
 
+// --- Server-Side Permanent Projects API ---
+app.get("/api/projects", (req, res) => {
+  const projects = readStoredProjects();
+  res.json({ success: true, projects });
+});
+
+app.post("/api/projects", (req, res) => {
+  try {
+    const incoming = req.body.project || req.body;
+    if (!incoming || !incoming.id) {
+      return res.status(400).json({ success: false, error: "Project must contain an 'id'" });
+    }
+
+    const currentList = readStoredProjects();
+    const existingIndex = currentList.findIndex((p: any) => p.id === incoming.id);
+    const now = Date.now();
+    const updatedProject = {
+      ...incoming,
+      updatedAt: now,
+      createdAt: incoming.createdAt || now,
+    };
+
+    if (existingIndex >= 0) {
+      currentList[existingIndex] = updatedProject;
+    } else {
+      currentList.unshift(updatedProject);
+    }
+
+    writeStoredProjects(currentList);
+    console.log(`[SERVER STORE] Project "${updatedProject.title}" (${updatedProject.id}) permanently saved.`);
+    res.json({ success: true, project: updatedProject, projects: currentList });
+  } catch (err: any) {
+    console.error("Failed to save project on server:", err);
+    res.status(500).json({ success: false, error: err.message || "Failed to persist project" });
+  }
+});
+
+app.delete("/api/projects/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+    const currentList = readStoredProjects();
+    const filtered = currentList.filter((p: any) => p.id !== id);
+    writeStoredProjects(filtered);
+    console.log(`[SERVER STORE] Project ${id} permanently deleted.`);
+    res.json({ success: true, deletedId: id, projects: filtered });
+  } catch (err: any) {
+    console.error("Failed to delete project on server:", err);
+    res.status(500).json({ success: false, error: err.message || "Failed to delete project" });
+  }
+});
+
+app.post("/api/projects/reset", (req, res) => {
+  try {
+    writeStoredProjects(PROJECTS_DATA);
+    console.log("[SERVER STORE] Projects reset to default.");
+    res.json({ success: true, projects: PROJECTS_DATA });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// --- Server-Side Permanent Site Settings & SEO API ---
+app.get("/api/settings", (req, res) => {
+  const settings = readStoredSettings();
+  res.json({ success: true, settings });
+});
+
+app.post("/api/settings", (req, res) => {
+  try {
+    const prev = readStoredSettings();
+    const next = { ...prev, ...req.body, updatedAt: Date.now() };
+    writeStoredSettings(next);
+    console.log("[SERVER STORE] Site settings permanently updated.");
+    res.json({ success: true, settings: next });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Dynamic XML Sitemap for SEO
 app.get("/sitemap.xml", (req, res) => {
-  const baseUrl = process.env.APP_URL || "https://priadarchitects.com";
+  const baseUrl = process.env.APP_URL || "https://www.priadarchitects.in";
   const pages = [
     "",
     "/about",
@@ -67,9 +219,15 @@ app.get("/sitemap.xml", (req, res) => {
   res.send(xml);
 });
 
+// Google Search Console Site Verification File route
+app.get("/google5c5874fddee15bd4.html", (req, res) => {
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.send("google-site-verification: google5c5874fddee15bd4.html");
+});
+
 // Dynamic Robots.txt for SEO
 app.get("/robots.txt", (req, res) => {
-  const baseUrl = process.env.APP_URL || "https://priadarchitects.com";
+  const baseUrl = process.env.APP_URL || "https://www.priadarchitects.in";
   const content = `User-agent: *
 Allow: /
 Sitemap: ${baseUrl}/sitemap.xml

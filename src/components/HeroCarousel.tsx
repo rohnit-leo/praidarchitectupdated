@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Mail, Facebook, Linkedin, Instagram } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import heroVillaImg from '../assets/images/hero_villa_twilight_1786284430616.jpg';
+import heroCommercialImg from '../assets/images/hero_commercial_building_1786284450247.jpg';
+import heroInteriorImg from '../assets/images/hero_luxury_interior_1786284466223.jpg';
 
 const slides = [
   {
     id: 1,
-    image: '/src/assets/images/hero_villa_twilight_1786284430616.jpg',
+    image: heroVillaImg,
+    fallback: '/assets/images/hero_villa_twilight_1786284430616.jpg',
+    onlineFallback: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=2000&q=85',
   },
   {
     id: 2,
-    image: '/src/assets/images/hero_commercial_building_1786284450247.jpg',
+    image: heroCommercialImg,
+    fallback: '/assets/images/hero_commercial_building_1786284450247.jpg',
+    onlineFallback: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=85',
   },
   {
     id: 3,
-    image: '/src/assets/images/hero_luxury_interior_1786284466223.jpg',
+    image: heroInteriorImg,
+    fallback: '/assets/images/hero_luxury_interior_1786284466223.jpg',
+    onlineFallback: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2000&q=85',
   }
 ];
 
@@ -45,8 +54,17 @@ export function HeroCarousel({ onEnquire }: { onEnquire: () => void }) {
           <img 
             src={slides[current].image} 
             alt="PRIAD Architectural Design" 
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-opacity duration-700"
             referrerPolicy="no-referrer"
+            onError={(e) => {
+              const target = e.currentTarget;
+              const slide = slides[current];
+              if (target.src !== slide.fallback && slide.fallback) {
+                target.src = slide.fallback;
+              } else if (target.src !== slide.onlineFallback && slide.onlineFallback) {
+                target.src = slide.onlineFallback;
+              }
+            }}
           />
           {/* Overlay gradient for high contrast readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />

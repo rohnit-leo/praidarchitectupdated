@@ -18,8 +18,25 @@ export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [enquiryOpen, setEnquiryOpen] = useState(false);
 
-  // Routing state
-  const [activePage, setActivePage] = useState<'home' | 'project-detail' | 'admin'>('home');
+  // Routing helper for dedicated /admin URL
+  const checkIsAdminRoute = () => {
+    if (typeof window === 'undefined') return false;
+    const path = window.location.pathname.toLowerCase();
+    const search = window.location.search.toLowerCase();
+    return (
+      path === '/admin' || 
+      path === '/admin/' || 
+      path.startsWith('/admin') ||
+      search.includes('admin=true') ||
+      search.includes('page=admin')
+    );
+  };
+
+  // Routing state - initialized from direct URL
+  const [activePage, setActivePage] = useState<'home' | 'project-detail' | 'admin'>(() => {
+    if (checkIsAdminRoute()) return 'admin';
+    return 'home';
+  });
   const [selectedProjectData, setSelectedProjectData] = useState<Project | null>(null);
 
   // Real-time Firestore projects
@@ -51,17 +68,35 @@ export default function App() {
     return () => unsubscribe();
   }, [selectedProjectData?.id]);
 
-  // Deep-linking support for SEO & direct project URL indexing: ?project=<id>
+  // Deep-linking support for SEO & direct URL indexing (/admin and ?project=<id>)
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const projectId = urlParams.get('project');
-    if (projectId && projectsList.length > 0) {
-      const found = projectsList.find((p) => p.id === projectId);
-      if (found) {
-        setSelectedProjectData(found);
-        setActivePage('project-detail');
+    const handleRouteSync = () => {
+      if (checkIsAdminRoute()) {
+        setActivePage('admin');
+        return;
       }
-    }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const projectId = urlParams.get('project');
+      if (projectId && projectsList.length > 0) {
+        const found = projectsList.find((p) => p.id === projectId);
+        if (found) {
+          setSelectedProjectData(found);
+          setActivePage('project-detail');
+          return;
+        }
+      }
+
+      // Default home
+      if (window.location.pathname === '/' && !projectId) {
+        setActivePage('home');
+        setSelectedProjectData(null);
+      }
+    };
+
+    handleRouteSync();
+    window.addEventListener('popstate', handleRouteSync);
+    return () => window.removeEventListener('popstate', handleRouteSync);
   }, [projectsList]);
 
   const handleOpenProject = (project: Project) => {
@@ -71,10 +106,16 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleOpenAdmin = () => {
+    setActivePage('admin');
+    window.history.pushState({}, '', '/admin');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleBackToHome = () => {
     setSelectedProjectData(null);
     setActivePage('home');
-    window.history.pushState({}, '', window.location.pathname);
+    window.history.pushState({}, '', '/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -513,15 +554,12 @@ export default function App() {
               <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
               <span>|</span>
               <button
-                onClick={() => {
-                  setActivePage('admin');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+                onClick={handleOpenAdmin}
                 className="text-slate-400 hover:text-white transition-colors flex items-center gap-1 cursor-pointer font-montserrat tracking-wider uppercase text-[10px]"
-                title="Administrator Portal"
+                title="Dedicated Administrator Portal (/admin)"
               >
                 <Lock className="w-3 h-3 text-slate-500" />
-                <span>Admin Login</span>
+                <span>Admin Login (/admin)</span>
               </button>
             </div>
           </div>

@@ -24,16 +24,30 @@ interface SEOAdminHubProps {
 
 export const SEOAdminHub: React.FC<SEOAdminHubProps> = ({ projects }) => {
   const [verificationCode, setVerificationCode] = useState(() => {
-    return localStorage.getItem('priad_google_site_verification') || '';
+    return localStorage.getItem('priad_google_site_verification') || 'google5c5874fddee15bd4';
   });
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
+  // Sync settings with server on mount
+  React.useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.settings?.googleVerificationCode) {
+          setVerificationCode(data.settings.googleVerificationCode);
+          localStorage.setItem('priad_google_site_verification', data.settings.googleVerificationCode);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const officialDomain = 'https://www.priadarchitects.in/';
   const sitemapUrl = 'https://www.priadarchitects.in/sitemap.xml';
   const robotsUrl = 'https://www.priadarchitects.in/robots.txt';
+  const verificationFileUrl = 'https://www.priadarchitects.in/google5c5874fddee15bd4.html';
 
-  const handleSaveVerification = (e: React.FormEvent) => {
+  const handleSaveVerification = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanToken = verificationCode.trim();
     localStorage.setItem('priad_google_site_verification', cleanToken);
@@ -47,6 +61,17 @@ export const SEOAdminHub: React.FC<SEOAdminHubProps> = ({ projects }) => {
       document.head.appendChild(metaTag);
     }
     metaTag.content = cleanToken;
+
+    // Permanently save to server storage
+    try {
+      await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ googleVerificationCode: cleanToken })
+      });
+    } catch (err) {
+      console.warn('Could not sync settings to server:', err);
+    }
 
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 3000);
@@ -168,33 +193,90 @@ export const SEOAdminHub: React.FC<SEOAdminHubProps> = ({ projects }) => {
       </div>
 
       {/* 2. Google Search Console Verification Manager */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8">
-        <div className="flex items-center gap-3 mb-4">
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+        <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
             <h3 className="font-serif-display text-lg text-white font-bold">
-              Google Site Verification Tag
+              Google Site Verification (HTML File & Meta Tag)
             </h3>
             <p className="text-xs text-slate-400 font-sans-body">
-              Instantly verify ownership of <code className="text-blue-300">https://www.priadarchitects.in/</code> with Google Search Console.
+              Two automated verification methods configured for <code className="text-blue-300">https://www.priadarchitects.in/</code>.
             </p>
           </div>
         </div>
 
-        <form onSubmit={handleSaveVerification} className="space-y-4">
-          <div>
-            <label className="block text-xs font-mono-tech uppercase tracking-wider text-slate-300 mb-2">
-              Google Verification Code (HTML Tag Content)
+        {/* Method A: Direct HTML File Verification (google5c5874fddee15bd4.html) */}
+        <div className="bg-slate-950/80 border border-emerald-800/40 rounded-2xl p-5 relative overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[10px] font-mono-tech uppercase tracking-wider text-emerald-400 font-bold">
+                  Method 1: HTML Verification File (Recommended & Active)
+                </span>
+              </div>
+              <h4 className="font-mono-tech text-sm text-white font-semibold flex items-center gap-2">
+                <span>google5c5874fddee15bd4.html</span>
+              </h4>
+              <p className="text-xs text-slate-400 mt-1 font-mono-tech">
+                Content: <span className="text-emerald-300 select-all">google-site-verification: google5c5874fddee15bd4.html</span>
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <a
+                href="/google5c5874fddee15bd4.html"
+                target="_blank"
+                rel="noreferrer"
+                className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono-tech px-4 py-2.5 rounded-xl border border-slate-700 flex items-center gap-1.5 transition-colors"
+              >
+                <span>Open File</span>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+              </a>
+
+              <button
+                type="button"
+                onClick={() => copyToClipboard('google-site-verification: google5c5874fddee15bd4.html', 'file-content')}
+                className="bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-800/60 text-xs font-mono-tech px-4 py-2.5 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                {copiedKey === 'file-content' ? (
+                  <>
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5" />
+                    <span>Copy Content</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Method B: HTML Meta Tag Verification */}
+        <div className="bg-slate-950/50 border border-slate-800/80 rounded-2xl p-5">
+          <div className="mb-3">
+            <span className="text-[10px] font-mono-tech uppercase tracking-wider text-blue-400 font-bold block mb-1">
+              Method 2: HTML Head Meta Tag
+            </span>
+            <label className="block text-xs font-mono-tech text-slate-300">
+              Google Verification Code Token (Applied to document &lt;head&gt; and saved to server)
             </label>
+          </div>
+
+          <form onSubmit={handleSaveVerification} className="space-y-4">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <input
                 type="text"
                 value={verificationCode}
                 onChange={(e) => setVerificationCode(e.target.value)}
-                placeholder='e.g. google-site-verification=abc123xyz_example_token'
-                className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono-tech"
+                placeholder='e.g. google5c5874fddee15bd4'
+                className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-emerald-500 font-mono-tech"
               />
               <button
                 type="submit"
@@ -203,32 +285,32 @@ export const SEOAdminHub: React.FC<SEOAdminHubProps> = ({ projects }) => {
                 {savedSuccess ? (
                   <>
                     <Check className="w-4 h-4" />
-                    <span>Saved & Active!</span>
+                    <span>Saved to Head & Server!</span>
                   </>
                 ) : (
                   <>
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>Save & Apply Meta Tag</span>
+                    <span>Save & Apply Tag</span>
                   </>
                 )}
               </button>
             </div>
-          </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 text-[11px] font-mono-tech text-slate-400">
-            <span>
-              Status:{' '}
-              {verificationCode ? (
-                <span className="text-emerald-400 font-bold">Active in &lt;head&gt; meta tag</span>
-              ) : (
-                <span className="text-amber-400 font-bold">Empty (Enter Google token when adding property)</span>
-              )}
-            </span>
-            <span className="text-slate-500">
-              Meta tag: &lt;meta name="google-site-verification" content="..." /&gt;
-            </span>
-          </div>
-        </form>
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px] font-mono-tech text-slate-400">
+              <span>
+                Status:{' '}
+                {verificationCode ? (
+                  <span className="text-emerald-400 font-bold">Active in &lt;head&gt; & Server Settings</span>
+                ) : (
+                  <span className="text-amber-400 font-bold">Empty (Enter Google token)</span>
+                )}
+              </span>
+              <span className="text-slate-500">
+                &lt;meta name="google-site-verification" content="{verificationCode}" /&gt;
+              </span>
+            </div>
+          </form>
+        </div>
       </div>
 
       {/* 3. 5-Step Guaranteed Google Search Indexing Guide */}

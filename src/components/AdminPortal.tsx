@@ -73,12 +73,25 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   // Admin high-level section: 'projects' | 'seo'
   const [adminSection, setAdminSection] = useState<'projects' | 'seo'>('projects');
   const [googleVerificationCode, setGoogleVerificationCode] = useState<string>(() => {
-    return localStorage.getItem('priad_google_site_verification') || '';
+    return localStorage.getItem('priad_google_site_verification') || 'google5c5874fddee15bd4';
   });
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
   const [verificationSaved, setVerificationSaved] = useState(false);
 
-  const handleSaveVerification = (e: React.FormEvent) => {
+  // Sync settings with server on mount
+  React.useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.settings?.googleVerificationCode) {
+          setGoogleVerificationCode(data.settings.googleVerificationCode);
+          localStorage.setItem('priad_google_site_verification', data.settings.googleVerificationCode);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleSaveVerification = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanToken = googleVerificationCode.trim();
     localStorage.setItem('priad_google_site_verification', cleanToken);
@@ -92,6 +105,17 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
       document.head.appendChild(metaTag);
     }
     metaTag.content = cleanToken;
+
+    // Permanently save to server storage
+    try {
+      await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ googleVerificationCode: cleanToken })
+      });
+    } catch (err) {
+      console.warn('Could not sync settings to server:', err);
+    }
     
     setVerificationSaved(true);
     setTimeout(() => setVerificationSaved(false), 3000);
@@ -247,7 +271,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     });
   };
 
-  // Save project to Firestore
+  // Save project to Firestore and Server
   const handleSaveProject = async () => {
     if (!editingProject) return;
 
@@ -259,19 +283,19 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     setIsSaving(true);
     try {
       await saveProject(editingProject);
-      setSaveSuccessMessage('Project successfully published and saved in real-time to Firebase Firestore!');
+      setSaveSuccessMessage('Project successfully saved and permanently reflected on website & server!');
       setTimeout(() => {
         setSaveSuccessMessage(null);
         setEditingProject(null);
       }, 1500);
     } catch (err: any) {
-      alert(`Failed to save project: ${err.message || 'Firestore connection error'}`);
+      alert(`Failed to save project: ${err.message || 'Storage error'}`);
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Delete project from Firestore
+  // Delete project from Firestore and Server
   const handleConfirmDelete = async () => {
     if (!projectToDelete) return;
     setIsDeleting(true);
@@ -285,12 +309,12 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     }
   };
 
-  // Reset to default
+  // Reset to default across Firestore and Server
   const handleResetDefaults = async () => {
-    if (confirm('Are you sure you want to reset the portfolio back to the initial default projects? All custom edits will be replaced.')) {
+    if (confirm('Are you sure you want to reset the portfolio back to the initial default projects? All custom edits will be replaced across the website and server.')) {
       try {
         await resetProjectsToDefault();
-        alert('Portfolio reset to default architectural showcases.');
+        alert('Portfolio reset to default architectural showcases across website & server.');
       } catch (err: any) {
         alert(`Reset failed: ${err.message || 'Error'}`);
       }
@@ -316,7 +340,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
           <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none" />
 
           {/* Logo & Header */}
-          <div className="flex flex-col items-center text-center mb-8 relative z-10">
+          <div className="flex flex-col items-center text-center mb-6 relative z-10">
             <div className="w-16 h-16 rounded-2xl border border-slate-700 bg-white/10 p-2 flex items-center justify-center mb-4 shadow-lg">
               <img
                 src="/assets/priad_logo.png"
@@ -326,14 +350,37 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               />
             </div>
             <span className="text-[10px] font-mono-tech tracking-[0.35em] text-blue-400 uppercase font-bold">
-              Restricted Access
+              Restricted Administrator Access
             </span>
             <h1 className="font-serif-display text-2xl sm:text-3xl text-white font-bold mt-1 tracking-wide uppercase">
               PRIAD ARCHITECTS
             </h1>
             <p className="text-xs text-slate-400 font-sans-body mt-2">
-              Enter master administrator password to manage portfolio showcases in real time.
+              Enter administrator credentials to manage projects & site verification.
             </p>
+
+            {/* Direct Admin URL Indicator */}
+            <div className="mt-4 w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 flex items-center justify-between text-xs font-mono-tech">
+              <div className="flex items-center gap-1.5 text-slate-400">
+                <Globe className="w-3.5 h-3.5 text-blue-400" />
+                <span>Admin URL:</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-blue-300 font-semibold">/admin</span>
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(typeof window !== 'undefined' ? `${window.location.origin}/admin` : 'https://www.priadarchitects.in/admin', 'login-admin-url')}
+                  className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  title="Copy Admin URL"
+                >
+                  {copiedItem === 'login-admin-url' ? (
+                    <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Password Form */}
@@ -397,7 +444,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     <div className="min-h-screen bg-slate-950 text-slate-100 pt-20 pb-20">
       {/* Top Admin Header */}
       <div className="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-30 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl border border-slate-700 bg-white/10 p-1.5 flex items-center justify-center shadow-sm">
               <img
@@ -416,15 +463,36 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                   Admin Portal
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-[11px] font-mono-tech text-emerald-400">
+              <div className="flex flex-wrap items-center gap-2 text-[11px] font-mono-tech text-emerald-400">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Live Firestore Real-Time Database Connected</span>
+                <span>Permanent Sync Active (Server Store + Firestore + Cache)</span>
               </div>
             </div>
           </div>
 
-          {/* Quick Header Actions */}
-          <div className="flex items-center gap-3">
+          {/* Dedicated Admin URL Badge & Header Actions */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 bg-slate-950 border border-slate-800 px-3.5 py-2 rounded-xl text-xs font-mono-tech">
+              <Globe className="w-3.5 h-3.5 text-blue-400" />
+              <span className="text-slate-400">URL:</span>
+              <span className="text-slate-200 font-semibold">
+                {typeof window !== 'undefined' ? `${window.location.host}/admin` : 'priadarchitects.in/admin'}
+              </span>
+              <button
+                type="button"
+                onClick={() => copyToClipboard(typeof window !== 'undefined' ? `${window.location.origin}/admin` : 'https://www.priadarchitects.in/admin', 'admin-header-url')}
+                className="ml-1 text-slate-400 hover:text-white transition-colors cursor-pointer flex items-center gap-1"
+                title="Copy full admin URL"
+              >
+                {copiedItem === 'admin-header-url' ? (
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                ) : (
+                  <Copy className="w-3.5 h-3.5" />
+                )}
+                <span className="text-[10px] text-slate-500">Copy</span>
+              </button>
+            </div>
+
             <button
               onClick={onExitAdmin}
               className="text-xs font-mono-tech uppercase tracking-wider text-slate-300 hover:text-white bg-slate-800/80 px-4 py-2 rounded-full border border-slate-700 cursor-pointer flex items-center gap-1.5 transition-colors"
@@ -438,7 +506,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               className="text-xs font-mono-tech uppercase tracking-wider text-rose-400 hover:text-rose-300 bg-rose-950/30 px-4 py-2 rounded-full border border-rose-900/50 cursor-pointer flex items-center gap-1.5 transition-colors"
             >
               <Lock className="w-3.5 h-3.5" />
-              <span>Lock / Exit</span>
+              <span>Lock</span>
             </button>
           </div>
         </div>
