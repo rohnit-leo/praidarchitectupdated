@@ -3,6 +3,8 @@ export type PageRoute =
   | 'about'
   | 'services'
   | 'portfolio'
+  | 'project-detail'
+  | 'admin'
   | 'process'
   | 'floorplan'
   | 'before-after'
@@ -15,15 +17,30 @@ export type PageRoute =
   | 'contact'
   | 'seo-hub';
 
+export interface ProjectHotspot {
+  x: number;
+  y: number;
+  roomName: string;
+  size: string;
+  description: string;
+  imageUrl: string;
+}
+
+export interface FloorPlanLevel {
+  levelName: string;
+  blueprintUrl: string;
+  hotspots: ProjectHotspot[];
+}
+
 export interface Project {
   id: string;
   title: string;
   subtitle: string;
-  category: 'Villa & Residence' | 'Commercial Tower' | 'Institutional' | 'Interior Makeover' | 'Facade Renovation' | 'Master Plan';
+  category: 'Villa & Residence' | 'Commercial Tower' | 'Institutional' | 'Interior Makeover' | 'Facade Renovation' | 'Master Plan' | string;
   location: string;
   areaSqFt: number;
   year: number;
-  status: 'Completed' | 'Under Construction' | 'Concept Stage';
+  status: 'Completed' | 'Under Construction' | 'Concept Stage' | string;
   heroImage: string;
   galleryImages: string[];
   beforeImage?: string;
@@ -34,11 +51,13 @@ export interface Project {
   architecturalStyle: string;
   structuralEngineer: string;
   awards?: string[];
-  floorPlanLevels: {
-    levelName: string;
-    blueprintUrl: string;
-    hotspots: { x: number; y: number; roomName: string; size: string; description: string; imageUrl: string }[];
-  }[];
+  floorPlanLevels?: FloorPlanLevel[];
+  client?: string;
+  vrTourUrl?: string;
+  featured?: boolean;
+  order?: number;
+  createdAt?: number;
+  updatedAt?: number;
 }
 
 export interface ServiceItem {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageRoute } from '../types';
-import { Compass, Phone, Mail, MapPin, ExternalLink, Shield, ArrowUpRight, CheckCircle } from 'lucide-react';
+import { Compass, Phone, Mail, MapPin, ExternalLink, Shield, ArrowUpRight, CheckCircle, Lock } from 'lucide-react';
 
 interface FooterProps {
   onNavigate: (route: PageRoute) => void;
@@ -45,8 +45,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenInquiry }) => 
         {/* Col 1: Studio Identity */}
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 border border-blue-400 flex items-center justify-center bg-blue-900/50 text-white rounded-lg">
-              <span className="font-serif-display font-bold text-lg">P</span>
+            <div className="w-12 h-12 rounded-xl border border-slate-700 bg-white/10 p-1.5 flex items-center justify-center shadow-sm">
+              <img
+                src="/assets/priad_logo.png"
+                alt="PRIAD ARCHITECTS Logo"
+                className="w-full h-full object-contain"
+                referrerPolicy="no-referrer"
+              />
             </div>
             <div>
               <div className="font-serif-display text-2xl tracking-[0.25em] font-extrabold text-white">PRIAD</div>
@@ -133,7 +138,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenInquiry }) => 
 
         {/* Col 4: SEO & Technical Resources */}
         <div className="space-y-4">
-          <h4 className="text-xs font-mono-tech text-blue-300 uppercase tracking-widest font-bold">SEO & Compliance</h4>
+          <h4 className="text-xs font-mono-tech text-blue-300 uppercase tracking-widest font-bold">SEO & Portal</h4>
           <ul className="space-y-2.5 text-xs text-slate-400">
             <li>
               <button onClick={() => onNavigate('seo-hub')} className="hover:text-white transition-colors cursor-pointer flex items-center gap-1">
@@ -162,6 +167,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenInquiry }) => 
                 Architectural Whitepapers
               </button>
             </li>
+            <li className="pt-2 border-t border-slate-800/80">
+              <button 
+                onClick={() => onNavigate('admin')} 
+                className="text-slate-400 hover:text-white transition-colors flex items-center gap-1.5 font-mono-tech text-xs cursor-pointer group"
+                title="Restricted Administrator Portal"
+              >
+                <Lock className="w-3 h-3 text-slate-500 group-hover:text-blue-400 transition-colors" />
+                <span>Admin Portal</span>
+              </button>
+            </li>
           </ul>
         </div>
       </div>
@@ -169,8 +184,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenInquiry }) => 
       {/* ELEVATED NEXTUREX DEVELOPED CREDIT BANNER (MANDATORY REQUIREMENT) */}
       <div className="border-t border-slate-800 bg-slate-950 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-xs text-slate-500 font-mono-tech">
-            © {new Date().getFullYear()} PRIAD ARCHITECTS. All rights reserved. Global Architectural Practice.
+          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 font-mono-tech">
+            <span>© {new Date().getFullYear()} PRIAD ARCHITECTS. All rights reserved.</span>
+            <span>•</span>
+            <button
+              onClick={() => onNavigate('admin')}
+              className="hover:text-slate-300 transition-colors flex items-center gap-1 cursor-pointer"
+            >
+              <Lock className="w-3 h-3" />
+              <span>Admin Access</span>
+            </button>
           </div>
 
           {/* Prominently Featured NextureX Credit */}

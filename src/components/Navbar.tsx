@@ -64,8 +64,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activeRoute, onNavigate, onOpenI
           >
             <div className="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center bg-white shadow-sm group-hover:border-blue-900 group-hover:scale-105 transition-all duration-300 overflow-hidden p-1">
               <img
-                src="https://kwrv4maomvrojc0c.public.blob.vercel-storage.com/IMG_3159.PNG"
-                alt="PRIAD ARCHITECTS Logo Symbol"
+                src="/assets/priad_logo.png"
+                alt="PRIAD ARCHITECTS Logo"
                 className="w-full h-full object-contain"
                 referrerPolicy="no-referrer"
               />

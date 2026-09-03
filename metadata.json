@@ -1,6 +1,6 @@
 {
   "name": "PRIAD ARCHITECTS updated",
-  "description": "World-class architectural \u0026 interior design firm digital experience featuring interactive project explorer, floorplan viewer, before/after comparisons, material studio, calculation tools, and SEO-optimized architecture portfolio.",
+  "description": "PRIAD ARCHITECTS official digital portal featuring real-time Firebase portfolio management, password-protected admin portal with direct image uploads, 360 VR virtual tours, and full project showcase pages.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

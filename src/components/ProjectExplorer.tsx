@@ -1,23 +1,34 @@
 import React, { useState } from 'react';
-import { PROJECTS_DATA } from '../data/projects';
-import { Project } from '../types';
-import { ArrowUpRight, X, Layers, MapPin, Calendar, Maximize2, Award, Download, CheckCircle } from 'lucide-react';
+import { Project, PageRoute } from '../types';
+import { ArrowUpRight, X, Layers, MapPin, Calendar, Maximize2, Award, Download, CheckCircle, Eye } from 'lucide-react';
 
-export const ProjectExplorer: React.FC = () => {
+interface ProjectExplorerProps {
+  projects: Project[];
+  onSelectProject: (project: Project) => void;
+  onNavigate: (route: PageRoute) => void;
+}
+
+export const ProjectExplorer: React.FC<ProjectExplorerProps> = ({
+  projects,
+  onSelectProject,
+  onNavigate
+}) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [activeProject, setActiveProject] = useState<Project | null>(null);
 
   const categories = [
     'All',
-    'Villa & Residence',
-    'Commercial Tower',
-    'Institutional',
-    'Interior Makeover'
+    ...Array.from(new Set(projects.map((p) => p.category)))
   ];
 
   const filteredProjects = selectedCategory === 'All'
-    ? PROJECTS_DATA
-    : PROJECTS_DATA.filter((p) => p.category === selectedCategory);
+    ? projects
+    : projects.filter((p) => p.category === selectedCategory);
+
+  const handleOpenDossier = (proj: Project) => {
+    onSelectProject(proj);
+    onNavigate('project-detail');
+  };
 
   return (
     <section className="py-24 bg-white text-slate-900 border-t border-slate-200 relative overflow-hidden">
@@ -186,20 +197,35 @@ export const ProjectExplorer: React.FC = () => {
 
             {/* Bottom Actions */}
             <div className="pt-6 flex flex-wrap items-center justify-between gap-4">
-              <a
-                href={`https://wa.me/919876543210?text=Hello%20PRIAD%20Architects%2C%20I%20am%20interested%20in%20a%20project%20similar%20to%20${encodeURIComponent(activeProject.title)}.`}
-                target="_blank"
-                rel="noreferrer"
-                className="bg-blue-900 hover:bg-blue-800 text-white font-semibold text-xs uppercase tracking-wider px-6 py-3 rounded-full cursor-pointer transition-all shadow-lg shadow-blue-900/20"
-              >
-                Inquire About Similar Project
-              </a>
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  onClick={() => {
+                    const proj = activeProject;
+                    setActiveProject(null);
+                    handleOpenDossier(proj);
+                  }}
+                  className="bg-blue-900 hover:bg-blue-800 text-white font-semibold text-xs uppercase tracking-wider px-6 py-3 rounded-full cursor-pointer transition-all shadow-lg shadow-blue-900/20 flex items-center gap-2"
+                >
+                  <Eye className="w-4 h-4" />
+                  <span>View Dedicated Project Page</span>
+                </button>
+
+                <a
+                  href={`https://wa.me/919876543210?text=Hello%20PRIAD%20Architects%2C%20I%20am%20interested%20in%20a%20project%20similar%20to%20${encodeURIComponent(activeProject.title)}.`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs uppercase tracking-wider px-5 py-3 rounded-full cursor-pointer transition-all"
+                >
+                  Inquire
+                </a>
+              </div>
+
               <button
                 onClick={() => alert(`Architectural Dossier PDF for ${activeProject.title} requested.`)}
                 className="bg-slate-100 text-blue-900 text-xs font-mono-tech font-bold px-5 py-3 rounded-full border border-slate-200 flex items-center gap-2 cursor-pointer hover:bg-slate-200 transition-colors"
               >
                 <Download className="w-4 h-4" />
-                <span>Download High-Res Dossier PDF</span>
+                <span>Download Dossier PDF</span>
               </button>
             </div>
           </div>

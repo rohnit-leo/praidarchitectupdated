@@ -1,0 +1,21 @@
+# PRIAD ARCHITECTS - Robots.txt
+# Domain: https://www.priadarchitects.in/
+User-agent: *
+Allow: /
+Disallow: /admin
+
+# Googlebot specific directives
+User-agent: Googlebot
+Allow: /
+Allow: /assets/
+Allow: /assets/priad_logo.png
+Disallow: /admin
+
+# Googlebot-Image
+User-agent: Googlebot-Image
+Allow: /
+Allow: /assets/
+
+# Host and Sitemap locations
+Host: https://www.priadarchitects.in
+Sitemap: https://www.priadarchitects.in/sitemap.xml
