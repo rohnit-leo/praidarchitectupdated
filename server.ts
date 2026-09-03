@@ -368,7 +368,7 @@ Output JSON with the following structure:
 app.post("/api/consultation", (req, res) => {
   const { name, phone, email, projectType, location, budget, timeline, notes } = req.body;
 
-  const whatsappPhone = "919876543210"; // Official PRIAD WhatsApp target line
+  const whatsappPhone = "919150073342"; // Official PRIAD WhatsApp target line (9150073342)
   const formattedMsg = `*PRIAD ARCHITECTS - NEW PROJECT CONSULTATION ENQUIRY*
 ----------------------------------------
 👤 *Client Name:* ${name || 'N/A'}

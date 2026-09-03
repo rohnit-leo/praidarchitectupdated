@@ -90,7 +90,7 @@ export const SEOAdminHub: React.FC<SEOAdminHubProps> = ({ projects }) => {
     legalName: 'PRIAD ARCHITECTS',
     url: 'https://www.priadarchitects.in/',
     logo: 'https://www.priadarchitects.in/assets/priad_logo.png',
-    telephone: '+919043721008',
+    telephone: '+919150073342',
     email: 'priad2728@gmail.com',
     priceRange: '$$$$',
     address: {
@@ -482,7 +482,7 @@ export const SEOAdminHub: React.FC<SEOAdminHubProps> = ({ projects }) => {
 
             <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
               <span className="text-slate-500">Phone / WhatsApp:</span>
-              <span className="text-emerald-300">+91 90437 21008</span>
+              <span className="text-emerald-300">+91 91500 73342</span>
             </div>
 
             <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">

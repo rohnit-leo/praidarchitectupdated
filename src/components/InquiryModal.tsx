@@ -53,7 +53,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({ isOpen, onClose, def
 📝 *Notes:* ${formData.notes}
 ----------------------------------------`;
 
-      const whatsappUrl = `https://wa.me/919876543210?text=${encodeURIComponent(formattedMsg)}`;
+      const whatsappUrl = `https://wa.me/919150073342?text=${encodeURIComponent(formattedMsg)}`;
       window.open(whatsappUrl, '_blank');
     } finally {
       setLoading(false);
@@ -104,7 +104,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({ isOpen, onClose, def
                 required
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="+91 98765 43210"
+                placeholder="+91 91500 73342"
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-blue-900"
               />
             </div>

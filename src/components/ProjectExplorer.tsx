@@ -211,7 +211,7 @@ export const ProjectExplorer: React.FC<ProjectExplorerProps> = ({
                 </button>
 
                 <a
-                  href={`https://wa.me/919876543210?text=Hello%20PRIAD%20Architects%2C%20I%20am%20interested%20in%20a%20project%20similar%20to%20${encodeURIComponent(activeProject.title)}.`}
+                  href={`https://wa.me/919150073342?text=Hello%20PRIAD%20Architects%2C%20I%20am%20interested%20in%20a%20project%20similar%20to%20${encodeURIComponent(activeProject.title)}.`}
                   target="_blank"
                   rel="noreferrer"
                   className="bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs uppercase tracking-wider px-5 py-3 rounded-full cursor-pointer transition-all"

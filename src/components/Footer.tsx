@@ -28,7 +28,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenInquiry }) => 
               Request Design Consultation
             </button>
             <a
-              href="https://wa.me/919876543210?text=Hello%20PRIAD%20Architects%2C%20I%20would%20like%20to%20discuss%20a%20new%20architectural%20project."
+              href="https://wa.me/919150073342?text=Hello%20PRIAD%20Architects%2C%20I%20would%20like%20to%20discuss%20a%20new%20architectural%20project."
               target="_blank"
               rel="noreferrer"
               className="bg-slate-800 hover:bg-slate-700 text-white font-mono-tech text-xs uppercase tracking-widest px-6 py-4 rounded-full border border-slate-700 flex items-center gap-2 cursor-pointer transition-all"
@@ -70,7 +70,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenInquiry }) => 
             </div>
             <div className="flex items-center gap-3">
               <Phone className="w-4 h-4 text-blue-400 shrink-0" />
-              <span>+91 98765 43210 / +1 (800) 774-2300</span>
+              <a href="tel:+919150073342" className="hover:text-white transition-colors">+91 91500 73342</a>
             </div>
             <div className="flex items-center gap-3">
               <Mail className="w-4 h-4 text-blue-400 shrink-0" />

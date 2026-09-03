@@ -369,7 +369,7 @@ export const ProjectDetailPage: React.FC<ProjectDetailPageProps> = ({
               </button>
 
               <a
-                href={`https://wa.me/919876543210?text=Hello%20PRIAD%20Architects%2C%20I%20would%20like%20to%20discuss%20a%20project%20similar%20to%20${encodeURIComponent(project.title)}`}
+                href={`https://wa.me/919150073342?text=Hello%20PRIAD%20Architects%2C%20I%20would%20like%20to%20discuss%20a%20project%20similar%20to%20${encodeURIComponent(project.title)}`}
                 target="_blank"
                 rel="noreferrer"
                 className="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono-tech text-xs uppercase tracking-wider py-3.5 rounded-xl transition-colors cursor-pointer text-center block border border-slate-700"

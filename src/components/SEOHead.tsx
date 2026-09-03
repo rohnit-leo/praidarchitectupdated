@@ -91,7 +91,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeRoute, customTitle, cust
       logo: 'https://www.priadarchitects.in/assets/priad_logo.png',
       image: project?.heroImage || 'https://www.priadarchitects.in/assets/priad_logo.png',
       description: 'Award-winning architectural and luxury interior design firm specializing in concept master planning, ultra-luxury villas, residential architecture, commercial projects, and interactive 360 VR walkthroughs.',
-      telephone: '+919043721008',
+      telephone: '+919150073342',
       email: 'priad2728@gmail.com',
       priceRange: '$$$$',
       currenciesAccepted: 'INR, USD',
@@ -125,7 +125,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ activeRoute, customTitle, cust
       sameAs: [
         'https://www.instagram.com/priad_architects/',
         'https://www.linkedin.com/in/priad-architects-a5b5b1351/',
-        'https://wa.me/919043721008'
+        'https://wa.me/919150073342'
       ]
     };
 
