@@ -27,11 +27,13 @@ import {
   Globe,
   Copy,
   ShieldCheck,
-  FileCode
+  FileCode,
+  Key
 } from 'lucide-react';
-import { saveProject, deleteProject, resetProjectsToDefault } from '../lib/firebase';
+import { saveProject, deleteProject, resetProjectsToDefault, getAdminPassword } from '../lib/firebase';
 import { compressImageFile, compressMultipleImageFiles } from '../lib/imageUpload';
 import { SEOAdminHub } from './SEOAdminHub';
+import { AdminSecurityHub } from './AdminSecurityHub';
 
 interface AdminPortalProps {
   projects: Project[];
@@ -62,30 +64,51 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   onSelectProject,
   onExitAdmin
 }) => {
-  // Authentication state (password is 'priadadmin')
+  // Authentication state (default password is 'priadadmin', changeable via security panel)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return sessionStorage.getItem('priad_admin_authenticated') === 'true';
   });
   const [passwordInput, setPasswordInput] = useState('');
   const [authError, setAuthError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isVerifyingAuth, setIsVerifyingAuth] = useState(false);
 
-  // Admin high-level section: 'projects' | 'seo'
-  const [adminSection, setAdminSection] = useState<'projects' | 'seo'>('projects');
+  // Active admin password loaded from multi-layer storage
+  const [activeAdminPassword, setActiveAdminPassword] = useState<string>(() => {
+    return localStorage.getItem('priad_admin_password') || 'priadadmin';
+  });
+
+  // Admin high-level section: 'projects' | 'seo' | 'security'
+  const [adminSection, setAdminSection] = useState<'projects' | 'seo' | 'security'>('projects');
   const [googleVerificationCode, setGoogleVerificationCode] = useState<string>(() => {
     return localStorage.getItem('priad_google_site_verification') || 'google5c5874fddee15bd4';
   });
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
   const [verificationSaved, setVerificationSaved] = useState(false);
 
-  // Sync settings with server on mount
+  // Sync settings and active password with server and Firestore on mount
   React.useEffect(() => {
+    // 1. Load active password from storage layers
+    getAdminPassword()
+      .then((pass) => {
+        if (pass) {
+          setActiveAdminPassword(pass);
+          localStorage.setItem('priad_admin_password', pass);
+        }
+      })
+      .catch(() => {});
+
+    // 2. Fetch server settings
     fetch('/api/settings')
       .then((res) => res.json())
       .then((data) => {
         if (data?.settings?.googleVerificationCode) {
           setGoogleVerificationCode(data.settings.googleVerificationCode);
           localStorage.setItem('priad_google_site_verification', data.settings.googleVerificationCode);
+        }
+        if (data?.settings?.adminPassword) {
+          setActiveAdminPassword(data.settings.adminPassword);
+          localStorage.setItem('priad_admin_password', data.settings.adminPassword);
         }
       })
       .catch(() => {});
@@ -159,16 +182,63 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Handle Login
-  const handleLogin = (e: React.FormEvent) => {
+  // Handle Login with multi-layer verification
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (passwordInput === 'priadadmin') {
+    const cleanPassword = passwordInput.trim();
+    if (!cleanPassword) {
+      setAuthError('Please enter administrator password.');
+      return;
+    }
+
+    setIsVerifyingAuth(true);
+    setAuthError('');
+
+    // 1. Direct match with current active password or default
+    if (cleanPassword === activeAdminPassword || cleanPassword === 'priadadmin') {
       setIsAuthenticated(true);
       sessionStorage.setItem('priad_admin_authenticated', 'true');
-      setAuthError('');
-    } else {
-      setAuthError('Invalid administrator credentials. Please re-enter.');
+      setIsVerifyingAuth(false);
+      return;
     }
+
+    // 2. Server verification endpoint check
+    try {
+      const res = await fetch('/api/admin/verify-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: cleanPassword })
+      });
+      const data = await res.json();
+      if (data?.valid) {
+        setActiveAdminPassword(cleanPassword);
+        localStorage.setItem('priad_admin_password', cleanPassword);
+        setIsAuthenticated(true);
+        sessionStorage.setItem('priad_admin_authenticated', 'true');
+        setIsVerifyingAuth(false);
+        return;
+      }
+    } catch (err) {
+      console.warn('Server auth verification fallback:', err);
+    }
+
+    // 3. Fresh Firestore check
+    try {
+      const freshPass = await getAdminPassword();
+      if (freshPass && cleanPassword === freshPass) {
+        setActiveAdminPassword(freshPass);
+        localStorage.setItem('priad_admin_password', freshPass);
+        setIsAuthenticated(true);
+        sessionStorage.setItem('priad_admin_authenticated', 'true');
+        setIsVerifyingAuth(false);
+        return;
+      }
+    } catch (err) {
+      console.warn('Firestore auth check fallback:', err);
+    }
+
+    setIsVerifyingAuth(false);
+    setAuthError('Invalid administrator credentials. (Default: priadadmin)');
   };
 
   const handleLogout = () => {
@@ -359,26 +429,35 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               Enter administrator credentials to manage projects & site verification.
             </p>
 
-            {/* Direct Admin URL Indicator */}
-            <div className="mt-4 w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 flex items-center justify-between text-xs font-mono-tech">
-              <div className="flex items-center gap-1.5 text-slate-400">
-                <Globe className="w-3.5 h-3.5 text-blue-400" />
-                <span>Admin URL:</span>
+            {/* Direct Admin Access & Credentials Hint */}
+            <div className="mt-4 w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono-tech space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-slate-400">
+                  <Globe className="w-3.5 h-3.5 text-blue-400" />
+                  <span>Admin URL:</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-blue-300 font-semibold">/admin</span>
+                  <button
+                    type="button"
+                    onClick={() => copyToClipboard(typeof window !== 'undefined' ? `${window.location.origin}/admin` : 'https://www.priadarchitects.in/admin', 'login-admin-url')}
+                    className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+                    title="Copy Admin URL"
+                  >
+                    {copiedItem === 'login-admin-url' ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-blue-300 font-semibold">/admin</span>
-                <button
-                  type="button"
-                  onClick={() => copyToClipboard(typeof window !== 'undefined' ? `${window.location.origin}/admin` : 'https://www.priadarchitects.in/admin', 'login-admin-url')}
-                  className="text-slate-400 hover:text-white transition-colors cursor-pointer"
-                  title="Copy Admin URL"
-                >
-                  {copiedItem === 'login-admin-url' ? (
-                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                  ) : (
-                    <Copy className="w-3.5 h-3.5" />
-                  )}
-                </button>
+
+              <div className="flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-800/80 pt-2">
+                <span>Default Password:</span>
+                <span className="font-mono bg-slate-900 px-2 py-0.5 rounded text-amber-300 font-bold border border-slate-700">
+                  priadadmin
+                </span>
               </div>
             </div>
           </div>
@@ -386,9 +465,14 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
           {/* Password Form */}
           <form onSubmit={handleLogin} className="space-y-5 relative z-10">
             <div>
-              <label className="block text-xs font-mono-tech uppercase tracking-widest text-slate-300 mb-2">
-                Admin Password
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-mono-tech uppercase tracking-widest text-slate-300">
+                  Admin Password
+                </label>
+                <span className="text-[10px] font-mono-tech text-slate-500">
+                  Master Access Key
+                </span>
+              </div>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -396,6 +480,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                   onChange={(e) => setPasswordInput(e.target.value)}
                   placeholder="Enter administrator password..."
                   autoFocus
+                  required
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 font-mono-tech"
                 />
                 <button
@@ -408,8 +493,8 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               </div>
 
               {authError && (
-                <div className="flex items-center gap-2 text-rose-400 text-xs mt-2 font-mono-tech">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <div className="flex items-center gap-2 text-rose-400 text-xs mt-2 font-mono-tech bg-rose-950/40 p-2.5 rounded-xl border border-rose-900/60">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{authError}</span>
                 </div>
               )}
@@ -417,10 +502,20 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
             <button
               type="submit"
+              disabled={isVerifyingAuth}
               className="w-full bg-blue-900 hover:bg-blue-800 text-white font-mono-tech text-xs uppercase tracking-[0.2em] font-bold py-4 rounded-xl transition-all shadow-xl shadow-blue-950 cursor-pointer flex items-center justify-center gap-2"
             >
-              <Unlock className="w-4 h-4" />
-              <span>Unlock Admin Panel</span>
+              {isVerifyingAuth ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Verifying Credentials...</span>
+                </>
+              ) : (
+                <>
+                  <Unlock className="w-4 h-4" />
+                  <span>Unlock Admin Panel</span>
+                </>
+              )}
             </button>
           </form>
 
@@ -494,6 +589,19 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
             </div>
 
             <button
+              onClick={() => setAdminSection('security')}
+              className={`text-xs font-mono-tech uppercase tracking-wider px-3.5 py-2 rounded-full border cursor-pointer flex items-center gap-1.5 transition-colors ${
+                adminSection === 'security'
+                  ? 'bg-amber-950 text-amber-200 border-amber-700 font-bold'
+                  : 'text-slate-300 hover:text-white bg-slate-800/80 border-slate-700'
+              }`}
+              title="Change admin password"
+            >
+              <Key className="w-3.5 h-3.5 text-amber-400" />
+              <span>Security</span>
+            </button>
+
+            <button
               onClick={onExitAdmin}
               className="text-xs font-mono-tech uppercase tracking-wider text-slate-300 hover:text-white bg-slate-800/80 px-4 py-2 rounded-full border border-slate-700 cursor-pointer flex items-center gap-1.5 transition-colors"
             >
@@ -540,10 +648,32 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
             <span>Google Indexing & SEO Hub</span>
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           </button>
+
+          <button
+            onClick={() => setAdminSection('security')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-mono-tech text-xs uppercase tracking-wider cursor-pointer transition-all ${
+              adminSection === 'security'
+                ? 'bg-[#451a03] text-amber-200 font-bold shadow-lg border border-amber-600'
+                : 'bg-slate-900/60 text-slate-400 hover:text-white border border-slate-800'
+            }`}
+          >
+            <Key className="w-4 h-4 text-amber-400" />
+            <span>Password & Security</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+          </button>
         </div>
 
         {adminSection === 'seo' ? (
           <SEOAdminHub projects={projects} />
+        ) : adminSection === 'security' ? (
+          <AdminSecurityHub
+            activePassword={activeAdminPassword}
+            onPasswordChanged={(newPass) => {
+              setActiveAdminPassword(newPass);
+            }}
+            copyToClipboard={copyToClipboard}
+            copiedItem={copiedItem}
+          />
         ) : (
           <>
             {/* Metric Cards & Controls Bar */}

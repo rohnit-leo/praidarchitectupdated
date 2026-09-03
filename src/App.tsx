@@ -18,17 +18,23 @@ export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [enquiryOpen, setEnquiryOpen] = useState(false);
 
-  // Routing helper for dedicated /admin URL
+  // Routing helper for dedicated /admin URL (supports path, query param, and hash routing)
   const checkIsAdminRoute = () => {
     if (typeof window === 'undefined') return false;
     const path = window.location.pathname.toLowerCase();
     const search = window.location.search.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
     return (
       path === '/admin' || 
       path === '/admin/' || 
       path.startsWith('/admin') ||
+      path.includes('admin.html') ||
       search.includes('admin=true') ||
-      search.includes('page=admin')
+      search.includes('page=admin') ||
+      search.includes('view=admin') ||
+      hash === '#admin' ||
+      hash === '#/admin' ||
+      hash.includes('admin')
     );
   };
 
@@ -96,7 +102,11 @@ export default function App() {
 
     handleRouteSync();
     window.addEventListener('popstate', handleRouteSync);
-    return () => window.removeEventListener('popstate', handleRouteSync);
+    window.addEventListener('hashchange', handleRouteSync);
+    return () => {
+      window.removeEventListener('popstate', handleRouteSync);
+      window.removeEventListener('hashchange', handleRouteSync);
+    };
   }, [projectsList]);
 
   const handleOpenProject = (project: Project) => {

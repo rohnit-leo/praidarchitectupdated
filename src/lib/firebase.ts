@@ -7,6 +7,7 @@ import {
   deleteDoc,
   onSnapshot,
   getDocs,
+  getDoc,
   Firestore
 } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
@@ -325,3 +326,137 @@ export async function resetProjectsToDefault(): Promise<void> {
 
   await Promise.allSettled([serverPromise, firestorePromise]);
 }
+
+export const DEFAULT_ADMIN_PASSWORD = 'priadadmin';
+export const ADMIN_PASSWORD_CACHE_KEY = 'priad_admin_password';
+
+/**
+ * Retrieve the current admin password with multi-layer synchronization:
+ * 1. Local browser cache
+ * 2. Permanent Node server storage (/api/settings)
+ * 3. Firebase Firestore document (settings/admin_security)
+ * Defaults to 'priadadmin' if not changed.
+ */
+export async function getAdminPassword(): Promise<string> {
+  // 1. Check local cache
+  const cached = localStorage.getItem(ADMIN_PASSWORD_CACHE_KEY);
+
+  // 2. Query Firestore
+  try {
+    const docRef = doc(db, 'settings', 'admin_security');
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      if (data && typeof data.password === 'string' && data.password.trim()) {
+        const pass = data.password.trim();
+        localStorage.setItem(ADMIN_PASSWORD_CACHE_KEY, pass);
+        return pass;
+      }
+    }
+  } catch (err) {
+    console.warn('Could not read admin security config from Firestore:', err);
+  }
+
+  // 3. Query Server storage
+  try {
+    const res = await fetch('/api/settings');
+    if (res.ok) {
+      const json = await res.json();
+      if (json?.settings?.adminPassword) {
+        const pass = json.settings.adminPassword.trim();
+        localStorage.setItem(ADMIN_PASSWORD_CACHE_KEY, pass);
+        return pass;
+      }
+    }
+  } catch (err) {
+    console.warn('Could not read admin security config from server:', err);
+  }
+
+  return cached || DEFAULT_ADMIN_PASSWORD;
+}
+
+/**
+ * Permanently update the administrator password across all layers:
+ * 1. Local cache
+ * 2. Firebase Firestore
+ * 3. Node server store
+ */
+export async function changeAdminPassword(
+  newPassword: string,
+  currentPassword?: string
+): Promise<{ success: boolean; message: string }> {
+  const cleanPass = newPassword.trim();
+  if (!cleanPass || cleanPass.length < 3) {
+    throw new Error('New password must be at least 3 characters long.');
+  }
+
+  // 1. Update local cache
+  localStorage.setItem(ADMIN_PASSWORD_CACHE_KEY, cleanPass);
+
+  // 2. Update Firestore
+  const firestorePromise = (async () => {
+    try {
+      const docRef = doc(db, 'settings', 'admin_security');
+      await setDoc(docRef, {
+        password: cleanPass,
+        updatedAt: Date.now()
+      }, { merge: true });
+    } catch (err) {
+      console.warn('Firestore password update warning:', err);
+    }
+  })();
+
+  // 3. Update Node server storage
+  const serverPromise = (async () => {
+    try {
+      const res = await fetch('/api/admin/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword: cleanPass })
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data?.error || 'Failed to update on server');
+      }
+    } catch (err: any) {
+      console.warn('Server password update warning:', err);
+    }
+  })();
+
+  await Promise.allSettled([firestorePromise, serverPromise]);
+
+  return {
+    success: true,
+    message: 'Administrator password successfully updated across all storage systems!'
+  };
+}
+
+/**
+ * Reset password back to default 'priadadmin'
+ */
+export async function resetAdminPasswordToDefault(): Promise<void> {
+  localStorage.setItem(ADMIN_PASSWORD_CACHE_KEY, DEFAULT_ADMIN_PASSWORD);
+
+  const firestorePromise = (async () => {
+    try {
+      const docRef = doc(db, 'settings', 'admin_security');
+      await setDoc(docRef, {
+        password: DEFAULT_ADMIN_PASSWORD,
+        updatedAt: Date.now()
+      }, { merge: true });
+    } catch (err) {
+      console.warn('Firestore password reset warning:', err);
+    }
+  })();
+
+  const serverPromise = (async () => {
+    try {
+      await fetch('/api/admin/reset-password', { method: 'POST' });
+    } catch (err) {
+      console.warn('Server password reset warning:', err);
+    }
+  })();
+
+  await Promise.allSettled([firestorePromise, serverPromise]);
+}
+

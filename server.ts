@@ -31,6 +31,8 @@ function ensureServerData() {
         JSON.stringify(
           {
             googleVerificationCode: "google5c5874fddee15bd4",
+            adminPassword: "priadadmin",
+            passwordUpdatedAt: Date.now(),
             updatedAt: Date.now(),
           },
           null,
@@ -64,9 +66,13 @@ function readStoredSettings(): Record<string, any> {
   ensureServerData();
   try {
     const raw = fs.readFileSync(SETTINGS_FILE, "utf-8");
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (!parsed.adminPassword) {
+      parsed.adminPassword = "priadadmin";
+    }
+    return parsed;
   } catch (err) {
-    return { googleVerificationCode: "google5c5874fddee15bd4" };
+    return { googleVerificationCode: "google5c5874fddee15bd4", adminPassword: "priadadmin" };
   }
 }
 
@@ -173,6 +179,54 @@ app.post("/api/settings", (req, res) => {
     writeStoredSettings(next);
     console.log("[SERVER STORE] Site settings permanently updated.");
     res.json({ success: true, settings: next });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// --- Admin Password Security API ---
+app.post("/api/admin/verify-password", (req, res) => {
+  const { password } = req.body || {};
+  const settings = readStoredSettings();
+  const currentPassword = settings.adminPassword || "priadadmin";
+  const isValid = typeof password === "string" && password.trim() === currentPassword;
+  res.json({ success: true, valid: isValid });
+});
+
+app.post("/api/admin/change-password", (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body || {};
+    if (!newPassword || typeof newPassword !== "string" || newPassword.trim().length < 3) {
+      return res.status(400).json({ success: false, error: "New password must be at least 3 characters." });
+    }
+
+    const settings = readStoredSettings();
+    const activePassword = settings.adminPassword || "priadadmin";
+
+    // If current password is provided, verify it
+    if (currentPassword !== undefined && currentPassword !== null && currentPassword.trim() !== activePassword) {
+      return res.status(401).json({ success: false, error: "Current password does not match." });
+    }
+
+    settings.adminPassword = newPassword.trim();
+    settings.passwordUpdatedAt = Date.now();
+    writeStoredSettings(settings);
+
+    console.log("[SERVER STORE] Admin password successfully changed.");
+    res.json({ success: true, message: "Administrator password changed successfully." });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message || "Failed to change password." });
+  }
+});
+
+app.post("/api/admin/reset-password", (req, res) => {
+  try {
+    const settings = readStoredSettings();
+    settings.adminPassword = "priadadmin";
+    settings.passwordUpdatedAt = Date.now();
+    writeStoredSettings(settings);
+    console.log("[SERVER STORE] Admin password reset to default 'priadadmin'.");
+    res.json({ success: true, message: "Password reset to default 'priadadmin'." });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -349,6 +403,10 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), "dist");
+    // Explicitly handle /admin directly before general static files
+    app.get(["/admin", "/admin/*", "/admin.html"], (req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
+    });
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));
