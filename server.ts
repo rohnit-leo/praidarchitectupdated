@@ -5,6 +5,14 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import { PROJECTS_DATA } from "./src/data/projects";
 
+// Process safety handlers to prevent dev server crashing on uncaught exceptions
+process.on("uncaughtException", (err) => {
+  console.error("Warning: Uncaught Exception caught in server process:", err);
+});
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Warning: Unhandled Rejection at:", promise, "reason:", reason);
+});
+
 const app = express();
 const PORT = 3000;
 
@@ -418,4 +426,6 @@ async function startServer() {
   });
 }
 
-startServer();
+startServer().catch((err) => {
+  console.error("FATAL: Failed to start server:", err);
+});

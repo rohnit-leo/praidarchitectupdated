@@ -91,22 +91,6 @@ export function HeroCarousel({ onEnquire }: { onEnquire: () => void }) {
           COIMBATORE
         </div>
 
-        {/* Accolades / Highlights */}
-        <div className="space-y-3 mb-10 text-slate-200 font-sans-body text-xs sm:text-sm leading-relaxed max-w-xl">
-          <p className="italic">
-            <strong className="text-white font-semibold not-italic">Recognized In India's Top 50 Under 40 Architects</strong> By IGEN 2022
-          </p>
-          <p className="italic">
-            <strong className="text-white font-semibold not-italic">Winners Of Young Designers Awards</strong> 2018 By IA&B
-          </p>
-          <p className="italic">
-            The <strong className="text-white font-semibold not-italic">Most Promising Architecture Firm Award</strong> In The Commercial Category
-          </p>
-          <p className="italic">
-            <strong className="text-white font-semibold not-italic">Winners Of Young Architect's Award</strong> By 28th JK AYA For "A House Of Small Talks"
-          </p>
-        </div>
-
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 mb-10 max-w-md">
           <button 
